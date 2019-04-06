@@ -1,0 +1,59 @@
+<Document>
+
+<Meta>
+    <Author>Martin42</Author>
+    <Creator>MPDF</Creator>
+    <Subject>Sample 1</Subject>
+</Meta>
+
+<Default>
+    <Orientation>portrait</Orientation>
+    <Unit>mm</Unit>
+    <Format>a4</Format>
+    <PageBreaks>auto</PageBreaks>
+    <PageMargins>
+        <Left>30</Left>
+        <Top>20</Top>
+        <Right>10</Right>
+        <Bottom>20</Bottom>
+    </PageMargins>
+</Default>
+
+<Style>
+default-font{
+    font-family: Arial;
+    font-size: 12;
+    font-style: normal;	
+}
+
+</Style>
+
+<Header>    
+</Header> 
+
+<Footer>    
+</Footer>
+
+<Body>
+<!-- <Font class="launcher body" style="font-size: 12; font-style: bold; border: 1,0,1,0;"/> -->
+<Font class="default-font"/>
+
+<Text style="line-height: 1.5; width: 60; h-align: center;">
+Lorem `__ipsum__` dolor minor. Set stupidate sin causa extrema est.
+Claustro etiam numbat decesse.
+</Text>
+
+<Font style="font-family: Times;"/>
+
+<Text style="line-height: 1.5; width: 80; h-align: left;">
+Lorem *ipsum* dolor minor.\
+Set stupidate sin causa extrema est.
+Claustro etiam numbat decesse.
+</Text>
+
+
+
+</Body> 
+
+</Document>
+
