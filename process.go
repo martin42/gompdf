@@ -1,7 +1,9 @@
 package gompdf
 
 import (
+	"fmt"
 	"io"
+	"time"
 
 	"github.com/jung-kurt/gofpdf"
 )
@@ -52,6 +54,8 @@ func NewProcessor(doc *Document, options ...ProcessOption) (*Processor, error) {
 }
 
 func (p *Processor) Process(w io.Writer) error {
+	start := time.Now()
+	fmt.Printf("run instructions ...\n")
 	p.pdf = gofpdf.New(
 		fpdfOrientation(p.doc.Default.Orientation),
 		fpdfUnit(p.doc.Default.Unit),
@@ -75,6 +79,7 @@ func (p *Processor) Process(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("run instructions ... in (%s)\n", time.Since(start))
 	return p.pdf.Output(w)
 }
 
@@ -88,6 +93,8 @@ func (p *Processor) processInstructions(is Instructions) {
 		switch i := i.(type) {
 		case *Font:
 			p.processFont(i)
+		case *LineFeed:
+			p.processLineFeed(i)
 		case *Box:
 			p.renderBox(i)
 		case *Text:
@@ -102,6 +109,12 @@ func (p *Processor) processFont(fnt *Font) {
 	p.currFont = *fnt
 }
 
+func (p *Processor) processLineFeed(lf *LineFeed) {
+	_, fontHeight := p.pdf.GetFontSize()
+	height := fontHeight * lf.Lines
+	p.pdf.Ln(height)
+}
+
 func (p *Processor) renderText(text *Text) {
 	text.ApplyStyles(DefaultText)
 	var width float64
@@ -110,7 +123,8 @@ func (p *Processor) renderText(text *Text) {
 	} else {
 		pw, _ := p.pdf.GetPageSize()
 		l, _, r, _ := p.pdf.GetMargins()
-		width = pw - (l + r)
+		width = pw - (l + r) - 3
+		Logf("set auto width: %.1f", width)
 	}
 	p.write(text.Text, width, float64(text.lineHeight), text.hAlign)
 }

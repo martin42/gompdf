@@ -2,22 +2,31 @@ package gompdf
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"github.com/pkg/errors"
 )
 
 func ParseAndBuild(source string, target string) error {
+	start := time.Now()
+	fmt.Printf("load (%s) ...\n", source)
 	doc, err := LoadFromFile(source)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("loaded (%s) ... in (%s)\n", source, time.Since(start))
+
 	outF, err := os.Create(target)
 	if err != nil {
 		return err
 	}
 	defer outF.Close()
+
+	start = time.Now()
+	fmt.Printf("process ...\n")
 	p, err := NewProcessor(doc)
 	if err != nil {
 		return err
@@ -26,6 +35,7 @@ func ParseAndBuild(source string, target string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("processed ... in (%s)\n", time.Since(start))
 	return nil
 }
 

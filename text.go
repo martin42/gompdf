@@ -7,8 +7,9 @@ import (
 )
 
 type textLine struct {
-	mdWords   markdown.Items
-	textWidth float64
+	mdWords               markdown.Items
+	textWidth             float64
+	textWidthTrimmedRight float64
 }
 
 func (p *Processor) applyMarkdownFont(mdi markdown.Item) {
@@ -43,23 +44,29 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64) []textLine 
 		}
 		p.applyMarkdownFont(mdWord)
 		wordWidth := p.pdf.GetStringWidth(mdWord.Text)
+		wordWidthTrimmedRight := p.pdf.GetStringWidth(strings.TrimRight(mdWord.Text, " "))
 		if currLine.textWidth+wordWidth > width {
 			lines = append(lines, currLine)
-			mdWord.Text = strings.TrimLeft(mdWord.Text, " ")
 			currLine = textLine{
-				mdWords:   markdown.Items{mdWord},
-				textWidth: wordWidth,
+				mdWords:   markdown.Items{},
+				textWidth: 0,
 			}
-		} else {
-			if len(currLine.mdWords) == 0 {
-				mdWord.Text = strings.TrimLeft(mdWord.Text, " ")
-			}
-			currLine.mdWords = append(currLine.mdWords, mdWord)
-			currLine.textWidth += wordWidth
 		}
+		if len(currLine.mdWords) == 0 {
+			mdWord.Text = strings.TrimLeft(mdWord.Text, " ")
+			wordWidth = p.pdf.GetStringWidth(mdWord.Text)
+		}
+		currLine.mdWords = append(currLine.mdWords, mdWord)
+		currLine.textWidthTrimmedRight = currLine.textWidth + wordWidthTrimmedRight
+		currLine.textWidth += wordWidth
 	}
 	if len(currLine.mdWords) > 0 {
 		lines = append(lines, currLine)
+	}
+	for _, l := range lines {
+		if len(l.mdWords) > 0 {
+			l.mdWords[len(l.mdWords)-1].Text = strings.TrimRight(l.mdWords[len(l.mdWords)-1].Text, " ")
+		}
 	}
 	return lines
 }
@@ -67,7 +74,6 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64) []textLine 
 func (p *Processor) write(text string, width float64, lineHeight float64, halign HAlign) {
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
-	text = strings.Replace(text, "{nl}", "\n", -1)
 	text = strings.Trim(text, " ")
 	_, fontHeight := p.pdf.GetFontSize()
 	height := fontHeight * lineHeight
@@ -75,13 +81,16 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 	mdWords := markdown.NewProcessor().Process(text).WordItems()
 	lines := p.textLines(mdWords, width)
 	for _, line := range lines {
+		if len(line.mdWords) == 0 {
+			continue
+		}
 		switch halign {
 		case HAlignLeft:
 			p.pdf.SetX(xLeft)
 		case HAlignCenter:
-			p.pdf.SetX(xLeft + (width-line.textWidth)/2.0)
+			p.pdf.SetX(xLeft + (width-line.textWidthTrimmedRight)/2.0)
 		case HAlignRight:
-			p.pdf.SetX(xLeft + width - line.textWidth)
+			p.pdf.SetX(xLeft + width - line.textWidthTrimmedRight)
 		}
 
 		for _, mdWord := range line.mdWords {

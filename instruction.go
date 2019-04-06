@@ -148,7 +148,7 @@ func (fnt *Font) ApplyStyles(def Font) {
 type LineFeed struct {
 	NoStyles
 	XMLName xml.Name `xml:"Lf"`
-	Value   int      `xml:"value,attr"`
+	Lines   float64  `xml:"lines,attr"`
 }
 
 type SetX struct {

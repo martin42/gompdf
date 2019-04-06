@@ -39,15 +39,34 @@ default-font{
 <Font class="default-font"/>
 
 <Text style="line-height: 1.5; width: 60; h-align: center;">
-Lorem `__ipsum__` dolor minor. Set stupidate sin causa extrema est.
+Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
 </Text>
 
+<Lf lines="1.5"/>
 <Font style="font-family: Times;"/>
 
-<Text style="line-height: 1.5; width: 80; h-align: left;">
-Lorem *ipsum* dolor minor.\ Novo
+<Text style="line-height: 1.5; width: 80; h-align: right;">
+Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
+Claustro etiam numbat decesse.
+</Text>
+
+<Lf lines="1.5"/>
+<Font style="font-family: Arial;"/>
+
+<Text style="line-height: 1.5; width: -1; h-align: right;">
+Lorem *ipsum* dolor minor. Novo\
+Set sum stupidate sin causa extrema est.
+Claustro etiam numbat decesse.
+</Text>
+
+<Lf lines="1.5"/>
+<Font style="font-family: Times;"/>
+
+<Text style="line-height: 1.5; width: -1; h-align: right;">
+Lorem ipsum dolor minor. Novo
+Set sum    stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
 </Text>
 
