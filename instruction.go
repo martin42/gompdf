@@ -19,6 +19,7 @@ func init() {
 	instructionRegistry.Register(&LineFeed{})
 	instructionRegistry.Register(&SetX{})
 	instructionRegistry.Register(&SetY{})
+	instructionRegistry.Register(&SetXY{})
 	instructionRegistry.Register(&Image{})
 }
 
@@ -115,9 +116,7 @@ func (i *NoStyles) ApplyClasses(scs StyleClasses) {}
 
 func (i *NoStyles) ApplyStyles() {}
 
-type Font struct {
-	Styled
-	XMLName        xml.Name `xml:"Font"`
+type FontStyles struct {
 	fontFamily     FontFamily
 	fontPointSize  FontPointSize
 	fontStyle      FontStyle
@@ -125,24 +124,32 @@ type Font struct {
 	fontDecoration FontDecoration
 }
 
-func (fnt *Font) ApplyStyles(def Font) {
-	fnt.fontFamily = def.fontFamily
-	fnt.fontPointSize = def.fontPointSize
-	fnt.fontStyle = def.fontStyle
-	for _, s := range fnt.styles {
+func (fs *FontStyles) ApplyStyles(def FontStyles, styles Styles) {
+	*fs = def
+	for _, s := range styles {
 		switch s := s.(type) {
 		case FontFamily:
-			fnt.fontFamily = s
+			fs.fontFamily = s
 		case FontStyle:
-			fnt.fontStyle = s
+			fs.fontStyle = s
 		case FontPointSize:
-			fnt.fontPointSize = s
+			fs.fontPointSize = s
 		case FontWeight:
-			fnt.fontWeight = s
+			fs.fontWeight = s
 		case FontDecoration:
-			fnt.fontDecoration = s
+			fs.fontDecoration = s
 		}
 	}
+}
+
+type Font struct {
+	Styled
+	FontStyles
+	XMLName xml.Name `xml:"Font"`
+}
+
+func (fnt *Font) ApplyStyles(def FontStyles) {
+	fnt.FontStyles.ApplyStyles(def, fnt.styles)
 }
 
 type LineFeed struct {
@@ -154,38 +161,103 @@ type LineFeed struct {
 type SetX struct {
 	NoStyles
 	XMLName xml.Name `xml:"SetX"`
-	Value   int      `xml:"value,attr"`
+	X       float64  `xml:"x,attr"`
 }
 
 type SetY struct {
 	NoStyles
 	XMLName xml.Name `xml:"SetY"`
-	Value   int      `xml:"value,attr"`
+	Y       float64  `xml:"y,attr"`
+}
+
+type SetXY struct {
+	NoStyles
+	XMLName xml.Name `xml:"SetXY"`
+	X       float64  `xml:"x,attr"`
+	Y       float64  `xml:"y,attr"`
+}
+
+type DrawingStyles struct {
+	backgroundColor BackgroundColor
+	color           Color
+	lineWidth       LineWidth
+}
+
+func (b *DrawingStyles) ApplyStyles(def DrawingStyles, styles Styles) {
+	*b = def
+	for _, s := range styles {
+		switch s := s.(type) {
+		case BackgroundColor:
+			b.backgroundColor = s
+		case Color:
+			b.color = s
+		case LineWidth:
+			b.lineWidth = s
+		}
+	}
+}
+
+type BoxStyles struct {
+	border  Border
+	padding Padding
+}
+
+func (b *BoxStyles) ApplyStyles(def BoxStyles, styles Styles) {
+	*b = def
+	for _, s := range styles {
+		switch s := s.(type) {
+		case Border:
+			b.border = s
+		case Padding:
+			b.padding = s
+		}
+	}
 }
 
 type Box struct {
 	Styled
+	BoxStyles
+	TextStyles
+	DrawingStyles
 	XMLName xml.Name `xml:"Box"`
 	Text    string   `xml:",chardata"`
 }
 
-func (b *Box) ApplyStyles() {
-
+func (b *Box) ApplyStyles(defBox BoxStyles, defText TextStyles, defDraw DrawingStyles) {
+	b.BoxStyles.ApplyStyles(defBox, b.styles)
+	b.TextStyles.ApplyStyles(defText, b.styles)
+	b.DrawingStyles.ApplyStyles(defDraw, b.styles)
 }
 
-type Text struct {
-	Styled
-	XMLName    xml.Name `xml:"Text"`
-	Text       string   `xml:",chardata"`
+type TextStyles struct {
 	lineHeight LineHeight
 	width      Width
 	hAlign     HAlign
 }
 
-func (t *Text) ApplyStyles(def Text) {
-	t.lineHeight = def.lineHeight
-	t.width = def.width
-	t.hAlign = def.hAlign
+func (ts *TextStyles) ApplyStyles(def TextStyles, styles Styles) {
+	*ts = def
+	for _, s := range styles {
+		switch s := s.(type) {
+		case LineHeight:
+			ts.lineHeight = s
+		case Width:
+			ts.width = s
+		case HAlign:
+			ts.hAlign = s
+		}
+	}
+}
+
+type Text struct {
+	Styled
+	TextStyles
+	XMLName xml.Name `xml:"Text"`
+	Text    string   `xml:",chardata"`
+}
+
+func (t *Text) ApplyStyles(def TextStyles) {
+	t.TextStyles = def
 	for _, s := range t.styles {
 		switch s := s.(type) {
 		case LineHeight:

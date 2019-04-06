@@ -26,6 +26,12 @@ default-font{
     font-style: normal;	
 }
 
+default-font-small{
+    font-family: Arial;
+    font-size: 10;
+    font-style: normal;	
+}
+
 </Style>
 
 <Header>    
@@ -38,19 +44,34 @@ default-font{
 <!-- <Font class="launcher body" style="font-size: 12; font-style: bold; border: 1,0,1,0;"/> -->
 <Font class="default-font"/>
 
-<Text style="line-height: 1.5; width: 60; h-align: center;">
+<Box style="line-height: 1.5; width: 60; h-align: center; padding: 1,1,1,1; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
 Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
+</Box>
+
+<Font  class="default-font-small"/>
+<SetY y="25"/>
+<Text style="line-height: 1.5; width: -1; h-align: right">
+ich bins\
+der Batman\
+Tel.: 0066 (289433) 423758\
+EMail: batman@dark.knight
 </Text>
 
 <Lf lines="1.5"/>
 <Font style="font-family: Times;"/>
-
-<Text style="line-height: 1.5; width: 80; h-align: right;">
+<SetY y="60"/>
+<Box style="line-height: 1.5; width: 80; h-align: right; padding:0,0,0,0;">
 Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
-</Text>
+</Box>
+
+<Box style="line-height: 1.5; width: 80; h-align: left; padding:0,0,0,0;">
+Lorem *ipsum* dolor minor. Novo\
+Set sum stupidate sin causa extrema est.
+Claustro etiam numbat decesse.
+</Box>
 
 <Lf lines="1.5"/>
 <Font style="font-family: Arial;"/>

@@ -3,6 +3,7 @@ package gompdf
 import (
 	"bytes"
 	"fmt"
+	"image/color"
 	"reflect"
 	"strconv"
 
@@ -68,6 +69,9 @@ func init() {
 	styleRegistry.Register("font-decoration", makeFontDecoration)
 	styleRegistry.Register("h-align", makeHAlign)
 	styleRegistry.Register("v-align", makeVAlign)
+	styleRegistry.Register("background-color", makeBackgroundColor)
+	styleRegistry.Register("color", makeColor)
+	styleRegistry.Register("line-width", makeLineWidth)
 }
 
 type StyleRegistry struct {
@@ -370,3 +374,31 @@ func makeLineHeight(value string) (Style, error) {
 	}
 	return LineHeight(v), nil
 }
+
+type BackgroundColor color.RGBA
+
+func makeBackgroundColor(value string) (Style, error) {
+	return BackgroundColor(RGBAFromHexColor(value)), nil
+}
+
+type Color color.RGBA
+
+func makeColor(value string) (Style, error) {
+	return Color(RGBAFromHexColor(value)), nil
+}
+
+type LineWidth float64
+
+func makeLineWidth(value string) (Style, error) {
+	v, err := strconv.ParseFloat(value, 32)
+	if err != nil {
+		return nil, errors.Wrapf(err, "parse line-width (%s)", value)
+	}
+	return LineWidth(v), nil
+}
+
+//type
+// crOut := RGBAFromHexColor(r.Outline)
+// 	crFill := RGBAFromHexColor(r.Fill)
+// 	p.pdf.SetDrawColor(int(crOut.R), int(crOut.G), int(crOut.B))
+// 	p.pdf.SetFillColor(int(crFill.R), int(crFill.G), int(crFill.B))

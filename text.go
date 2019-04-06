@@ -99,5 +99,24 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 		}
 		p.pdf.Ln(height)
 	}
-	p.processFont(&p.currFont)
+	p.applyFont(&p.currFont)
+}
+
+func (p *Processor) textHeight(text string, width float64, lineHeight float64) float64 {
+	text = strings.Replace(text, "\n", " ", -1)
+	text = strings.Replace(text, "\r", " ", -1)
+	text = strings.Trim(text, " ")
+	_, fontHeight := p.pdf.GetFontSize()
+	height := fontHeight * lineHeight
+	mdWords := markdown.NewProcessor().Process(text).WordItems()
+	lines := p.textLines(mdWords, width)
+	textHeight := float64(0)
+	for _, line := range lines {
+		if len(line.mdWords) == 0 {
+			continue
+		}
+		textHeight += height
+	}
+	p.applyFont(&p.currFont)
+	return textHeight
 }
