@@ -74,17 +74,6 @@ func parseAndBuild(source string, target string) error {
 	if err != nil {
 		return err
 	}
-
-	// prc := mpdf.NewProcessor(doc)
-	// err = prc.Process()
-	// if err != nil {
-	// 	return err
-	// }
-
-	// err = prc.SavePDF(target)
-	// if err != nil {
-	// 	return err
-	// }
 	return nil
 }
 

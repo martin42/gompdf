@@ -48,7 +48,7 @@ func (i Item) WordItems() Items {
 		words = append(words, currWord)
 	}
 	for _, word := range words {
-		is.add(word, i.Italic, i.Bold, i.Code, false)
+		is.add(word, i.Italic, i.Bold, i.Code, i.Newline)
 	}
 	return is
 }
@@ -98,6 +98,7 @@ func (p *Processor) Process(s string) Items {
 		} else if strings.HasPrefix(s[i:], backslash) {
 			items.add(string(b), italic, bold, code, true)
 			items.add("", italic, bold, code, false)
+			i += 1
 		} else {
 			if len(items) == 0 {
 				items.add(string(b), italic, bold, code, false)

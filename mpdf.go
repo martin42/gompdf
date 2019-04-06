@@ -8,6 +8,27 @@ import (
 	"github.com/pkg/errors"
 )
 
+func ParseAndBuild(source string, target string) error {
+	doc, err := LoadFromFile(source)
+	if err != nil {
+		return err
+	}
+	outF, err := os.Create(target)
+	if err != nil {
+		return err
+	}
+	defer outF.Close()
+	p, err := NewProcessor(doc)
+	if err != nil {
+		return err
+	}
+	err = p.Process(outF)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func Load(r io.Reader) (*Document, error) {
 	doc := &Document{}
 	err := xml.NewDecoder(r).Decode(doc)
@@ -144,7 +165,6 @@ func (is *Instructions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 		switch t := token.(type) {
 		case xml.EndElement:
 			if t == start.End() {
-				Logf("end of instructions")
 				return nil
 			}
 		case xml.StartElement:

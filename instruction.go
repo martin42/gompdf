@@ -91,8 +91,6 @@ type Styled struct {
 func (i *Styled) Create(styles Styles, classes []string) {
 	i.styles = styles
 	i.classes = classes
-	Logf("styled: create with styles: %#v", i.styles)
-	Logf("styled: create with classes: %#v", i.classes)
 }
 
 func (i *Styled) ApplyClasses(scs StyleClasses) {

@@ -41,7 +41,6 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64) []textLine 
 			}
 			continue
 		}
-
 		p.applyMarkdownFont(mdWord)
 		wordWidth := p.pdf.GetStringWidth(mdWord.Text)
 		if currLine.textWidth+wordWidth > width {
@@ -52,6 +51,9 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64) []textLine 
 				textWidth: wordWidth,
 			}
 		} else {
+			if len(currLine.mdWords) == 0 {
+				mdWord.Text = strings.TrimLeft(mdWord.Text, " ")
+			}
 			currLine.mdWords = append(currLine.mdWords, mdWord)
 			currLine.textWidth += wordWidth
 		}
