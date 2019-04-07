@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -18,6 +19,8 @@ func ParseAndBuild(source string, target string) error {
 		return err
 	}
 	fmt.Printf("loaded (%s) ... in (%s)\n", source, time.Since(start))
+	//fmt.Printf("doc: (%#v)\n", doc)
+	doc.traceBody()
 
 	outF, err := os.Create(target)
 	if err != nil {
@@ -70,10 +73,19 @@ func LoadFromFile(file string) (*Document, error) {
 }
 
 func (doc *Document) applyClasses(iss *Instructions) error {
-	for _, is := range *iss {
+	for _, is := range iss.iss {
 		is.ApplyClasses(doc.Style)
 	}
 	return nil
+}
+
+func (doc *Document) traceBody() {
+	for _, i := range doc.Body.iss {
+		switch i := i.(type) {
+		case *Table:
+			fmt.Printf("table: %#v", *i)
+		}
+	}
 }
 
 type Orientation string
@@ -167,6 +179,23 @@ func (scs *StyleClasses) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 }
 
 func (is *Instructions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	Logf("unmarshal instructions (%s)", start.Name.Local)
+	allStyles := Styles{}
+	allClasses := []string{}
+	for _, a := range start.Attr {
+		if a.Name.Local == "style" {
+			styles, err := ParseStyles([]byte(a.Value))
+			if err != nil {
+				return errors.Wrapf(err, "parse styles of element <%s> (%s)", start.Name.Local, a.Value)
+			}
+			allStyles = append(allStyles, styles...)
+		} else if a.Name.Local == "class" {
+			allClasses = append(allClasses, strings.Fields(a.Value)...)
+		}
+	}
+	is.Create(allStyles, allClasses)
+	Logf("added iss styles (%v), classes(%s)", allStyles, allClasses)
+
 	for {
 		token, err := d.Token()
 		if err != nil {
@@ -182,7 +211,7 @@ func (is *Instructions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 			if err != nil {
 				return err
 			}
-			*is = append(*is, i)
+			is.iss = append(is.iss, i)
 		}
 	}
 }

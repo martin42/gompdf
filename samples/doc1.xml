@@ -26,9 +26,15 @@ default-font{
     font-style: normal;	
 }
 
+default-font-times{
+    font-family: Times;
+    font-size: 12;
+    font-style: normal;	
+}
+
 default-font-small{
     font-family: Arial;
-    font-size: 10;
+    font-size: 8;
     font-style: normal;	
 }
 
@@ -41,11 +47,11 @@ default-font-small{
 </Footer>
 
 <Body>
-<!-- <Font class="launcher body" style="font-size: 12; font-style: bold; border: 1,0,1,0;"/> -->
+
 <Font class="default-font"/>
 
 <Box style="line-height: 1.5; width: 60; h-align: center; padding: 1,1,1,1; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
-Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est.
+Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
 Claustro etiam numbat decesse.
 </Box>
 
@@ -53,14 +59,14 @@ Claustro etiam numbat decesse.
 <SetY y="25"/>
 <Text style="line-height: 1.5; width: -1; h-align: right">
 ich bins\
-der Batman\
+aha der Batman\
 Tel.: 0066 (289433) 423758\
 EMail: batman@dark.knight
 </Text>
 
 <Lf lines="1.5"/>
-<Font style="font-family: Times;"/>
-<SetY y="60"/>
+<Font class="default-font-times"/>
+<SetY y="70"/>
 <Box style="line-height: 1.5; width: 80; h-align: right; padding:0,0,0,0;">
 Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
@@ -91,6 +97,18 @@ Set sum    stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
 </Text>
 
+<Table style="width: 20;">
+    <Tr style="width: 20;">
+        <Td style="width: 20;"><Text>classico 100</Text></Td>
+        <Td style="width: 30;"><Text>classico 200</Text></Td>
+        <Td style="width: 40;"><Text>classico 300</Text></Td>
+    </Tr>
+    <Tr>
+        <Td></Td>
+        <Td></Td>
+        <Td></Td>
+    </Tr>
+</Table>
 
 
 </Body> 

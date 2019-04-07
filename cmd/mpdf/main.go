@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	source := flag.String("source", "../../samples/doc1.xml", "")
-	target := flag.String("target", "doc1.pdf", "")
+	source := flag.String("source", "../../samples/doc2.xml", "")
+	target := flag.String("target", "doc2.pdf", "")
 	flag.Parse()
 
 	fmt.Printf("compile (%s) to (%s) ...\n", *source, *target)

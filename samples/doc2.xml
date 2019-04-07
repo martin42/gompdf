@@ -1,0 +1,67 @@
+<Document>
+
+<Meta>
+    <Author>Martin42</Author>
+    <Creator>MPDF</Creator>
+    <Subject>Sample 1</Subject>
+</Meta>
+
+<Default>
+    <Orientation>portrait</Orientation>
+    <Unit>mm</Unit>
+    <Format>a4</Format>
+    <PageBreaks>auto</PageBreaks>
+    <PageMargins>
+        <Left>30</Left>
+        <Top>20</Top>
+        <Right>10</Right>
+        <Bottom>20</Bottom>
+    </PageMargins>
+</Default>
+
+<Style>
+default-font{
+    font-family: Arial;
+    font-size: 12;
+    font-style: normal;	
+}
+
+default-font-times{
+    font-family: Times;
+    font-size: 12;
+    font-style: normal;	
+}
+
+default-font-small{
+    font-family: Arial;
+    font-size: 8;
+    font-style: normal;	
+}
+
+</Style>
+
+<Header>    
+</Header> 
+
+<Footer>    
+</Footer>
+
+<Body>
+<Font class="default-font"/>
+
+<Table >
+    <Tr>
+        <Td style="width: 20;">
+            <Text>classico 100</Text>
+            <!-- <Content>
+                <Text>classico 100</Text>
+            </Content> -->
+        </Td>        
+    </Tr>
+</Table>
+
+
+</Body> 
+
+</Document>
+

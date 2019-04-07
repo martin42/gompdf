@@ -21,6 +21,7 @@ func init() {
 	instructionRegistry.Register(&SetY{})
 	instructionRegistry.Register(&SetXY{})
 	instructionRegistry.Register(&Image{})
+	instructionRegistry.Register(&Table{})
 }
 
 type Instruction interface {
@@ -28,7 +29,10 @@ type Instruction interface {
 	ApplyClasses(scs StyleClasses)
 }
 
-type Instructions []Instruction
+type Instructions struct {
+	Styled
+	iss []Instruction
+}
 
 type Registry struct {
 	types map[string]Instruction
@@ -66,6 +70,7 @@ func (r *Registry) Decode(d *xml.Decoder, start xml.StartElement) (Instruction, 
 		return nil, err
 	}
 
+	Logf("decoded: %s", start.Name.Local)
 	inst := pointerToI.Elem().Interface().(Instruction)
 	allStyles := Styles{}
 	allClasses := []string{}
@@ -85,24 +90,38 @@ func (r *Registry) Decode(d *xml.Decoder, start xml.StartElement) (Instruction, 
 }
 
 type Styled struct {
-	styles  Styles
-	classes []string
+	Styles  Styles   //`xml:"style,attr"`
+	Classes []string //`xml:"class,attr"`
 }
 
+// func (s *Styled) UnmarshalXMLAttr(attr xml.Attr) error {
+// 	Logf("UnmarshalXMLAttr: %s", attr.Name.Local)
+// 	if attr.Name.Local == "style" {
+// 		styles, err := ParseStyles([]byte(attr.Value))
+// 		if err != nil {
+// 			return err
+// 		}
+// 		s.Styles = styles
+// 	} else if attr.Name.Local == "class" {
+// 		s.Classes = strings.Fields(attr.Value)
+// 	}
+// 	return nil
+// }
+
 func (i *Styled) Create(styles Styles, classes []string) {
-	i.styles = styles
-	i.classes = classes
+	i.Styles = styles
+	i.Classes = classes
 }
 
 func (i *Styled) ApplyClasses(scs StyleClasses) {
-	for _, c := range i.classes {
+	for _, c := range i.Classes {
 		sc, found := scs.Find(c)
 		if !found {
 			continue
 		}
 		for _, s := range sc.Styles {
-			if _, contains := i.styles.FindByPrototype(s); !contains {
-				i.styles = append(i.styles, s)
+			if _, contains := i.Styles.FindByPrototype(s); !contains {
+				i.Styles = append(i.Styles, s)
 			}
 		}
 	}
@@ -149,7 +168,7 @@ type Font struct {
 }
 
 func (fnt *Font) ApplyStyles(def FontStyles) {
-	fnt.FontStyles.ApplyStyles(def, fnt.styles)
+	fnt.FontStyles.ApplyStyles(def, fnt.Styles)
 }
 
 type LineFeed struct {
@@ -224,9 +243,9 @@ type Box struct {
 }
 
 func (b *Box) ApplyStyles(defBox BoxStyles, defText TextStyles, defDraw DrawingStyles) {
-	b.BoxStyles.ApplyStyles(defBox, b.styles)
-	b.TextStyles.ApplyStyles(defText, b.styles)
-	b.DrawingStyles.ApplyStyles(defDraw, b.styles)
+	b.BoxStyles.ApplyStyles(defBox, b.Styles)
+	b.TextStyles.ApplyStyles(defText, b.Styles)
+	b.DrawingStyles.ApplyStyles(defDraw, b.Styles)
 }
 
 type TextStyles struct {
@@ -258,7 +277,7 @@ type Text struct {
 
 func (t *Text) ApplyStyles(def TextStyles) {
 	t.TextStyles = def
-	for _, s := range t.styles {
+	for _, s := range t.Styles {
 		switch s := s.(type) {
 		case LineHeight:
 			t.lineHeight = s

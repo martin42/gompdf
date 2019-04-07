@@ -27,7 +27,7 @@ func main() {
 	}
 	exec := func() {
 		logf("parse and build ...")
-		err := parseAndBuild(*source, *target)
+		err := gompdf.ParseAndBuild(*source, *target)
 		if err != nil {
 			logf("ERROR: %v", err)
 			return
@@ -45,36 +45,14 @@ func main() {
 		}
 	}()
 	exec()
+	lastEvtTime := time.Now()
 	for evt := range watch.Events {
-		if evt.Op == fsnotify.Write {
-			time.AfterFunc(50*time.Millisecond, exec)
+		if evt.Op == fsnotify.Write && time.Since(lastEvtTime) > 200*time.Millisecond {
+			time.AfterFunc(100*time.Millisecond, exec)
+			lastEvtTime = time.Now()
 		}
 	}
 	logf("watcher stopped")
-}
-
-func parseAndBuild(source string, target string) error {
-	doc, err := gompdf.LoadFromFile(source)
-	if err != nil {
-		return err
-	}
-	logf("doc: %v", doc)
-
-	outF, err := os.Create(target)
-	if err != nil {
-		return err
-	}
-	defer outF.Close()
-
-	p, err := gompdf.NewProcessor(doc)
-	if err != nil {
-		return err
-	}
-	err = p.Process(outF)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func logf(format string, args ...interface{}) {

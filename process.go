@@ -91,7 +91,7 @@ func (p *Processor) applyDefaults() {
 }
 
 func (p *Processor) processInstructions(is Instructions) {
-	for _, i := range is {
+	for _, i := range is.iss {
 		switch i := i.(type) {
 		case *Font:
 			p.applyFont(i)
