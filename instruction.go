@@ -25,7 +25,7 @@ func init() {
 }
 
 type Instruction interface {
-	Create(styles Styles, classes []string)
+	DecodeAttrs(attrs []xml.Attr) error
 	ApplyClasses(scs StyleClasses)
 }
 
@@ -69,48 +69,36 @@ func (r *Registry) Decode(d *xml.Decoder, start xml.StartElement) (Instruction, 
 	if err != nil {
 		return nil, err
 	}
-
-	Logf("decoded: %s", start.Name.Local)
 	inst := pointerToI.Elem().Interface().(Instruction)
+	err = inst.DecodeAttrs(start.Attr)
+	if err != nil {
+		return nil, err
+	}
+	return inst, nil
+}
+
+type Styled struct {
+	Styles  Styles
+	Classes []string
+}
+
+func (i *Styled) DecodeAttrs(attrs []xml.Attr) error {
 	allStyles := Styles{}
 	allClasses := []string{}
-	for _, a := range start.Attr {
+	for _, a := range attrs {
 		if a.Name.Local == "style" {
 			styles, err := ParseStyles([]byte(a.Value))
 			if err != nil {
-				return nil, errors.Wrapf(err, "parse styles of element <%s> (%s)", start.Name.Local, a.Value)
+				return errors.Wrapf(err, "parse style (%s)", a.Value)
 			}
 			allStyles = append(allStyles, styles...)
 		} else if a.Name.Local == "class" {
 			allClasses = append(allClasses, strings.Fields(a.Value)...)
 		}
 	}
-	inst.Create(allStyles, allClasses)
-	return inst, nil
-}
-
-type Styled struct {
-	Styles  Styles   //`xml:"style,attr"`
-	Classes []string //`xml:"class,attr"`
-}
-
-// func (s *Styled) UnmarshalXMLAttr(attr xml.Attr) error {
-// 	Logf("UnmarshalXMLAttr: %s", attr.Name.Local)
-// 	if attr.Name.Local == "style" {
-// 		styles, err := ParseStyles([]byte(attr.Value))
-// 		if err != nil {
-// 			return err
-// 		}
-// 		s.Styles = styles
-// 	} else if attr.Name.Local == "class" {
-// 		s.Classes = strings.Fields(attr.Value)
-// 	}
-// 	return nil
-// }
-
-func (i *Styled) Create(styles Styles, classes []string) {
-	i.Styles = styles
-	i.Classes = classes
+	i.Styles = allStyles
+	i.Classes = allClasses
+	return nil
 }
 
 func (i *Styled) ApplyClasses(scs StyleClasses) {
@@ -129,11 +117,9 @@ func (i *Styled) ApplyClasses(scs StyleClasses) {
 
 type NoStyles struct{}
 
-func (i *NoStyles) Create(styles Styles, classes []string) {}
+func (i *NoStyles) DecodeAttrs(attrs []xml.Attr) error { return nil }
 
 func (i *NoStyles) ApplyClasses(scs StyleClasses) {}
-
-func (i *NoStyles) ApplyStyles() {}
 
 type FontStyles struct {
 	fontFamily     FontFamily

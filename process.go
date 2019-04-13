@@ -107,6 +107,8 @@ func (p *Processor) processInstructions(is Instructions) {
 			p.renderBox(i)
 		case *Text:
 			p.renderText(i)
+		case *Table:
+			p.renderTable(i)
 		}
 	}
 }

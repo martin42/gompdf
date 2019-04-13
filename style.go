@@ -396,9 +396,3 @@ func makeLineWidth(value string) (Style, error) {
 	}
 	return LineWidth(v), nil
 }
-
-//type
-// crOut := RGBAFromHexColor(r.Outline)
-// 	crFill := RGBAFromHexColor(r.Fill)
-// 	p.pdf.SetDrawColor(int(crOut.R), int(crOut.G), int(crOut.B))
-// 	p.pdf.SetFillColor(int(crFill.R), int(crFill.G), int(crFill.B))

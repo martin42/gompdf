@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -179,23 +178,10 @@ func (scs *StyleClasses) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 }
 
 func (is *Instructions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	Logf("unmarshal instructions (%s)", start.Name.Local)
-	allStyles := Styles{}
-	allClasses := []string{}
-	for _, a := range start.Attr {
-		if a.Name.Local == "style" {
-			styles, err := ParseStyles([]byte(a.Value))
-			if err != nil {
-				return errors.Wrapf(err, "parse styles of element <%s> (%s)", start.Name.Local, a.Value)
-			}
-			allStyles = append(allStyles, styles...)
-		} else if a.Name.Local == "class" {
-			allClasses = append(allClasses, strings.Fields(a.Value)...)
-		}
+	err := is.DecodeAttrs(start.Attr)
+	if err != nil {
+		return err
 	}
-	is.Create(allStyles, allClasses)
-	Logf("added iss styles (%v), classes(%s)", allStyles, allClasses)
-
 	for {
 		token, err := d.Token()
 		if err != nil {
