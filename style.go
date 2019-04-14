@@ -58,15 +58,19 @@ func init() {
 	styleRegistry.Register("border", makeBorder)
 	styleRegistry.Register("padding", makePadding)
 	styleRegistry.Register("margin", makeMargin)
+
 	styleRegistry.Register("position", makePosition)
 	styleRegistry.Register("width", makeWidth)
 	styleRegistry.Register("height", makeHeight)
+
 	styleRegistry.Register("line-height", makeLineHeight)
+
 	styleRegistry.Register("font-family", makeFontFamily)
 	styleRegistry.Register("font-size", makeFontPointSize)
 	styleRegistry.Register("font-style", makeFontStyle)
 	styleRegistry.Register("font-weight", makeFontWeight)
 	styleRegistry.Register("font-decoration", makeFontDecoration)
+
 	styleRegistry.Register("h-align", makeHAlign)
 	styleRegistry.Register("v-align", makeVAlign)
 	styleRegistry.Register("background-color", makeBackgroundColor)

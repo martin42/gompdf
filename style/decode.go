@@ -1,6 +1,8 @@
 package style
 
 import (
+	"io"
+	"io/ioutil"
 	"reflect"
 	"strconv"
 	"strings"
@@ -34,25 +36,30 @@ type Unmarshaler interface {
 }
 
 type Decoder struct {
-	raw map[string]string
+	reader io.Reader
+	raw    map[string]string
 }
 
-func NewDecoder() *Decoder {
-	return &Decoder{}
+func NewDecoder(r io.Reader) *Decoder {
+	return &Decoder{
+		reader: r,
+	}
 }
 
-func (d *Decoder) Decode(s string) (Styles, error) {
-	var err error
-	d.raw, err = parseRaw(s)
+func (d *Decoder) Decode(styles *Styles) error {
+	b, err := ioutil.ReadAll(d.reader)
 	if err != nil {
-		return Styles{}, errors.Wrap(err, "parse raw")
+		return err
 	}
-	styles := Styles{}
-	err = d.decode(&styles, "")
+	d.raw, err = parseRaw(string(b))
 	if err != nil {
-		return Styles{}, err
+		return errors.Wrap(err, "parse raw")
 	}
-	return styles, nil
+	err = d.decode(styles, "")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (d *Decoder) decode(v interface{}, styleName string) error {
