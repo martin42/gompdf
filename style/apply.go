@@ -1,7 +1,6 @@
 package style
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"reflect"
@@ -32,7 +31,7 @@ func DecodeApplier(r io.Reader) (*Applier, error) {
 	}
 	protoType := reflect.TypeOf(Styles{})
 	for k, v := range raw {
-		fnc, found, err := makeApplyFncV2(protoType, k, v, []int{})
+		fnc, found, err := makeApplyFnc(protoType, k, v, []int{})
 		if err != nil {
 			return nil, errors.Wrapf(err, "make-apply-fnc (%s, %s)", k, v)
 		}
@@ -50,37 +49,11 @@ func (a *Applier) Apply(styles *Styles) {
 	}
 }
 
-func makeApplyFncV1(key, val string) (ApplyFnc, error) {
-	switch key {
-	case "font-family":
-		return func(styles *Styles) {
-			styles.Font.Family = val
-		}, nil
-	case "border":
-		b := Border{}
-		err := b.UnmarshalStyle(val)
-		if err != nil {
-			return nil, err
-		}
-		return func(styles *Styles) {
-			styles.Box.Border = b
-		}, nil
-	default:
-		return ApplyNone, nil
-	}
-}
-
-func makeApplyFncV2(rt reflect.Type, key, val string, indexPath []int) (ApplyFnc, bool, error) {
-	//find field with tag style=key
-	fmt.Printf("make-fnc (%s) -> (%s, %s)\n", rt.Name(), key, val)
+func makeApplyFnc(rt reflect.Type, key, val string, indexPath []int) (ApplyFnc, bool, error) {
 	for i := 0; i < rt.NumField(); i++ {
 		field := rt.Field(i)
-		//fmt.Printf("check field (%s) (style:%s)\n", field.Name, field.Tag.Get(""))
 		currIndexPath := appendedCopy(indexPath, i)
 		if t := field.Tag.Get("style"); t == key {
-			fmt.Printf("make-fnc found field (%s) (%s)\n", field.Name, field.Type.Name())
-			//check if type implements unmarshaler
-
 			var setValue func(reflect.Value)
 			um, impls := reflect.New(field.Type).Interface().(Unmarshaler)
 			if impls {
@@ -100,18 +73,16 @@ func makeApplyFncV2(rt reflect.Type, key, val string, indexPath []int) (ApplyFnc
 			}
 
 			return func(s *Styles) {
-				fmt.Printf("apply (%v)\n", currIndexPath)
 				rVal := reflect.ValueOf(s).Elem()
 				for _, fIdx := range currIndexPath {
-					field := rVal.Field(fIdx)
-					fmt.Printf("    field %d (%s) \n", fIdx, field.Type().Name())
 					rVal = rVal.Field(fIdx)
 				}
 				setValue(rVal)
 			}, true, nil
 		}
+
 		if field.Type.Kind() == reflect.Struct {
-			fnc, found, err := makeApplyFncV2(field.Type, key, val, currIndexPath)
+			fnc, found, err := makeApplyFnc(field.Type, key, val, currIndexPath)
 			if err != nil {
 				return nil, true, err
 			} else if found {
@@ -165,11 +136,3 @@ func appendedCopy(sl []int, a int) []int {
 	c[len(c)-1] = a
 	return c
 }
-
-/*
-Family     string         `style:"font-family"`
-	PointSize  float64        `style:"font-point-size"`
-	Style      FontStyle      `style:"font-style"`
-	Weight     FontWeight     `style:"font-weight"`
-	Decoration FontDecoration `style:"font-decoration"`
-*/

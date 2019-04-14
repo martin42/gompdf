@@ -73,6 +73,7 @@ func init() {
 
 	styleRegistry.Register("h-align", makeHAlign)
 	styleRegistry.Register("v-align", makeVAlign)
+
 	styleRegistry.Register("background-color", makeBackgroundColor)
 	styleRegistry.Register("color", makeColor)
 	styleRegistry.Register("line-width", makeLineWidth)

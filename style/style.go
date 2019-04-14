@@ -5,4 +5,5 @@ type Styles struct {
 	Box
 	Dimension
 	Align
+	Color
 }
