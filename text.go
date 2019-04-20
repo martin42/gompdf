@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/martin42/gompdf/markdown"
+	"github.com/martin42/gompdf/style"
 )
 
 type textLine struct {
@@ -12,7 +13,7 @@ type textLine struct {
 	textWidthTrimmedRight float64
 }
 
-func (p *Processor) applyMarkdownFont(mdi markdown.Item) {
+func (p *Processor) applyMarkdownFont(mdi markdown.Item, toFnt style.Font) {
 	fntStyles := ""
 	if mdi.Italic {
 		fntStyles += "I"
@@ -20,14 +21,14 @@ func (p *Processor) applyMarkdownFont(mdi markdown.Item) {
 	if mdi.Bold {
 		fntStyles += "B"
 	}
-	family := string(p.currFont.fontFamily)
+	family := string(toFnt.Family)
 	if mdi.Code {
 		family = "Courier"
 	}
-	p.pdf.SetFont(family, fntStyles, float64(p.currFont.fontPointSize))
+	p.pdf.SetFont(family, fntStyles, toFnt.PointSize)
 }
 
-func (p *Processor) textLines(mdWords markdown.Items, width float64) []textLine {
+func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.Font) []textLine {
 	lines := []textLine{}
 	currLine := textLine{
 		mdWords:   markdown.Items{},
@@ -42,7 +43,7 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64) []textLine 
 			}
 			continue
 		}
-		p.applyMarkdownFont(mdWord)
+		p.applyMarkdownFont(mdWord, fnt)
 		wordWidth := p.pdf.GetStringWidth(mdWord.Text)
 		wordWidthTrimmedRight := p.pdf.GetStringWidth(strings.TrimRight(mdWord.Text, " "))
 		if currLine.textWidth+wordWidth > width {
@@ -71,7 +72,7 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64) []textLine 
 	return lines
 }
 
-func (p *Processor) write(text string, width float64, lineHeight float64, halign HAlign) {
+func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font) {
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
 	text = strings.Trim(text, " ")
@@ -79,37 +80,37 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 	height := fontHeight * lineHeight
 	xLeft := p.pdf.GetX()
 	mdWords := markdown.NewProcessor().Process(text).WordItems()
-	lines := p.textLines(mdWords, width)
+	lines := p.textLines(mdWords, width, fnt)
 	for _, line := range lines {
 		if len(line.mdWords) == 0 {
 			continue
 		}
 		switch halign {
-		case HAlignLeft:
+		case style.HAlignLeft:
 			p.pdf.SetX(xLeft)
-		case HAlignCenter:
+		case style.HAlignCenter:
 			p.pdf.SetX(xLeft + (width-line.textWidthTrimmedRight)/2.0)
-		case HAlignRight:
+		case style.HAlignRight:
 			p.pdf.SetX(xLeft + width - line.textWidthTrimmedRight)
 		}
 
 		for _, mdWord := range line.mdWords {
-			p.applyMarkdownFont(mdWord)
+			p.applyMarkdownFont(mdWord, fnt)
 			p.pdf.Write(height, mdWord.Text)
 		}
 		p.pdf.Ln(height)
 	}
-	p.applyFont(&p.currFont)
+	p.applyFont(fnt)
 }
 
-func (p *Processor) textHeight(text string, width float64, lineHeight float64) float64 {
+func (p *Processor) textHeight(text string, width float64, lineHeight float64, fnt style.Font) float64 {
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
 	text = strings.Trim(text, " ")
 	_, fontHeight := p.pdf.GetFontSize()
 	height := fontHeight * lineHeight
 	mdWords := markdown.NewProcessor().Process(text).WordItems()
-	lines := p.textLines(mdWords, width)
+	lines := p.textLines(mdWords, width, fnt)
 	textHeight := float64(0)
 	for _, line := range lines {
 		if len(line.mdWords) == 0 {
@@ -117,6 +118,6 @@ func (p *Processor) textHeight(text string, width float64, lineHeight float64) f
 		}
 		textHeight += height
 	}
-	p.applyFont(&p.currFont)
+	p.applyFont(fnt)
 	return textHeight
 }

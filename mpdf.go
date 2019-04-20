@@ -1,11 +1,14 @@
 package gompdf
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"io"
 	"os"
 	"time"
+
+	"github.com/martin42/gompdf/style"
 
 	"github.com/pkg/errors"
 )
@@ -47,15 +50,7 @@ func Load(r io.Reader) (*Document, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = doc.applyClasses(&doc.Body)
-	if err != nil {
-		return nil, err
-	}
-	err = doc.applyClasses(&doc.Header)
-	if err != nil {
-		return nil, err
-	}
-	err = doc.applyClasses(&doc.Footer)
+	doc.styleClasses, err = style.DecodeClasses(bytes.NewBufferString(doc.Style))
 	if err != nil {
 		return nil, err
 	}
@@ -71,13 +66,6 @@ func LoadFromFile(file string) (*Document, error) {
 	return Load(f)
 }
 
-func (doc *Document) applyClasses(iss *Instructions) error {
-	for _, is := range iss.iss {
-		is.ApplyClasses(doc.Style)
-	}
-	return nil
-}
-
 func (doc *Document) traceBody() {
 	for _, i := range doc.Body.iss {
 		switch i := i.(type) {
@@ -85,6 +73,10 @@ func (doc *Document) traceBody() {
 			fmt.Printf("table: %#v", *i)
 		}
 	}
+}
+
+func (doc *Document) StyleClasses() style.Classes {
+	return doc.styleClasses
 }
 
 type Orientation string
@@ -129,13 +121,14 @@ type PageMargins struct {
 }
 
 type Document struct {
-	XMLName xml.Name     `xml:"Document"`
-	Meta    Meta         `xml:"Meta"`
-	Default Default      `xml:"Default"`
-	Style   StyleClasses `xml:"Style"`
-	Header  Instructions `xml:"Header"`
-	Footer  Instructions `xml:"Footer"`
-	Body    Instructions `xml:"Body"`
+	XMLName      xml.Name `xml:"Document"`
+	Meta         Meta     `xml:"Meta"`
+	Default      Default  `xml:"Default"`
+	Style        string   `xml:"Style"`
+	styleClasses style.Classes
+	Header       Instructions `xml:"Header"`
+	Footer       Instructions `xml:"Footer"`
+	Body         Instructions `xml:"Body"`
 }
 
 type Meta struct {
@@ -154,28 +147,28 @@ type Default struct {
 	PageMargins PageMargins   `xml:"PageMargins"`
 }
 
-func (scs *StyleClasses) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	for {
-		tok, err := d.Token()
-		if err != nil {
-			return err
-		}
-		switch tok := tok.(type) {
-		case xml.CharData:
-			pscs, err := ParseClasses(tok)
-			if err != nil {
-				return err
-			}
-			*scs = pscs
-		case xml.EndElement:
-			if tok == start.End() {
-				return nil
-			}
-		default:
-			return errors.Errorf("invalid xml token type for style element (%T)", tok)
-		}
-	}
-}
+// func (scs *StyleClasses) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+// 	for {
+// 		tok, err := d.Token()
+// 		if err != nil {
+// 			return err
+// 		}
+// 		switch tok := tok.(type) {
+// 		case xml.CharData:
+// 			pscs, err := ParseClasses(tok)
+// 			if err != nil {
+// 				return err
+// 			}
+// 			*scs = pscs
+// 		case xml.EndElement:
+// 			if tok == start.End() {
+// 				return nil
+// 			}
+// 		default:
+// 			return errors.Errorf("invalid xml token type for style element (%T)", tok)
+// 		}
+// 	}
+// }
 
 func (is *Instructions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	err := is.DecodeAttrs(start.Attr)

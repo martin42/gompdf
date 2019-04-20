@@ -2,6 +2,8 @@ package gompdf
 
 import (
 	"encoding/xml"
+
+	"github.com/martin42/gompdf/style"
 )
 
 type Table struct {
@@ -17,13 +19,16 @@ type TableRow struct {
 
 func (t Table) ColumnWidths(pageWidth float64) []float64 {
 	cellWidth := func(c Instructions, def float64) float64 {
-		for _, s := range c.Styles {
-			switch i := s.(type) {
-			case Width:
-				return float64(i)
-			}
-		}
-		return def
+		// sty := DefaultStyle
+		// //c.Apply(style.Cl)
+		// for _, s := range c.Styles {
+		// 	switch i := s.(type) {
+		// 	case Width:
+		// 		return float64(i)
+		// 	}
+		// }
+		// return def
+		return 20
 	}
 
 	cws := make([]float64, t.MaxColumnCount())
@@ -65,7 +70,7 @@ func (t Table) MaxColumnCount() int {
 	return m
 }
 
-func (p *Processor) renderTable(t *Table) {
+func (p *Processor) renderTable(t *Table, sty style.Styles) {
 	if t.MaxColumnCount() == 0 {
 		return
 	}
@@ -86,7 +91,7 @@ func (p *Processor) renderTable(t *Table) {
 			for _, is := range c.iss {
 				switch is := is.(type) {
 				case *Text:
-					p.write(is.Text, colWs[i], 1.5, HAlignLeft)
+					p.write(is.Text, colWs[i], 1.5, style.HAlignLeft, sty.Font)
 				}
 			}
 			x += colWs[i]

@@ -1,11 +1,13 @@
 package gompdf
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"reflect"
 	"strings"
 
+	"github.com/martin42/gompdf/style"
 	"github.com/pkg/errors"
 )
 
@@ -26,7 +28,7 @@ func init() {
 
 type Instruction interface {
 	DecodeAttrs(attrs []xml.Attr) error
-	ApplyClasses(scs StyleClasses)
+	Apply(cs style.Classes, styles *style.Styles)
 }
 
 type Instructions struct {
@@ -78,40 +80,29 @@ func (r *Registry) Decode(d *xml.Decoder, start xml.StartElement) (Instruction, 
 }
 
 type Styled struct {
-	Styles  Styles
-	Classes []string
+	Appliers []*style.Applier
+	Classes  []string
 }
 
 func (i *Styled) DecodeAttrs(attrs []xml.Attr) error {
-	allStyles := Styles{}
-	allClasses := []string{}
 	for _, a := range attrs {
 		if a.Name.Local == "style" {
-			styles, err := ParseStyles([]byte(a.Value))
+			app, err := style.DecodeApplier(bytes.NewBufferString(a.Value))
 			if err != nil {
-				return errors.Wrapf(err, "parse style (%s)", a.Value)
+				return errors.Wrapf(err, "decode style applier (%s)", a.Value)
 			}
-			allStyles = append(allStyles, styles...)
+			i.Appliers = append(i.Appliers, app)
 		} else if a.Name.Local == "class" {
-			allClasses = append(allClasses, strings.Fields(a.Value)...)
+			i.Classes = append(i.Classes, strings.Fields(a.Value)...)
 		}
 	}
-	i.Styles = allStyles
-	i.Classes = allClasses
 	return nil
 }
 
-func (i *Styled) ApplyClasses(scs StyleClasses) {
-	for _, c := range i.Classes {
-		sc, found := scs.Find(c)
-		if !found {
-			continue
-		}
-		for _, s := range sc.Styles {
-			if _, contains := i.Styles.FindByPrototype(s); !contains {
-				i.Styles = append(i.Styles, s)
-			}
-		}
+func (i *Styled) Apply(cs style.Classes, styles *style.Styles) {
+	cs.Apply(styles, i.Classes...)
+	for _, app := range i.Appliers {
+		app.Apply(styles)
 	}
 }
 
@@ -119,42 +110,11 @@ type NoStyles struct{}
 
 func (i *NoStyles) DecodeAttrs(attrs []xml.Attr) error { return nil }
 
-func (i *NoStyles) ApplyClasses(scs StyleClasses) {}
-
-type FontStyles struct {
-	fontFamily     FontFamily
-	fontPointSize  FontPointSize
-	fontStyle      FontStyle
-	fontWeight     FontWeight
-	fontDecoration FontDecoration
-}
-
-func (fs *FontStyles) ApplyStyles(def FontStyles, styles Styles) {
-	*fs = def
-	for _, s := range styles {
-		switch s := s.(type) {
-		case FontFamily:
-			fs.fontFamily = s
-		case FontStyle:
-			fs.fontStyle = s
-		case FontPointSize:
-			fs.fontPointSize = s
-		case FontWeight:
-			fs.fontWeight = s
-		case FontDecoration:
-			fs.fontDecoration = s
-		}
-	}
-}
+func (i *NoStyles) Apply(cs style.Classes, styles *style.Styles) {}
 
 type Font struct {
 	Styled
-	FontStyles
 	XMLName xml.Name `xml:"Font"`
-}
-
-func (fnt *Font) ApplyStyles(def FontStyles) {
-	fnt.FontStyles.ApplyStyles(def, fnt.Styles)
 }
 
 type LineFeed struct {
@@ -182,105 +142,20 @@ type SetXY struct {
 	Y       float64  `xml:"y,attr"`
 }
 
-type DrawingStyles struct {
-	backgroundColor BackgroundColor
-	color           Color
-	lineWidth       LineWidth
-}
-
-func (b *DrawingStyles) ApplyStyles(def DrawingStyles, styles Styles) {
-	*b = def
-	for _, s := range styles {
-		switch s := s.(type) {
-		case BackgroundColor:
-			b.backgroundColor = s
-		case Color:
-			b.color = s
-		case LineWidth:
-			b.lineWidth = s
-		}
-	}
-}
-
-type BoxStyles struct {
-	border  Border
-	padding Padding
-}
-
-func (b *BoxStyles) ApplyStyles(def BoxStyles, styles Styles) {
-	*b = def
-	for _, s := range styles {
-		switch s := s.(type) {
-		case Border:
-			b.border = s
-		case Padding:
-			b.padding = s
-		}
-	}
-}
-
 type Box struct {
 	Styled
-	BoxStyles
-	TextStyles
-	DrawingStyles
 	XMLName xml.Name `xml:"Box"`
 	Text    string   `xml:",chardata"`
 }
 
-func (b *Box) ApplyStyles(defBox BoxStyles, defText TextStyles, defDraw DrawingStyles) {
-	b.BoxStyles.ApplyStyles(defBox, b.Styles)
-	b.TextStyles.ApplyStyles(defText, b.Styles)
-	b.DrawingStyles.ApplyStyles(defDraw, b.Styles)
-}
-
-type TextStyles struct {
-	lineHeight LineHeight
-	width      Width
-	hAlign     HAlign
-}
-
-func (ts *TextStyles) ApplyStyles(def TextStyles, styles Styles) {
-	*ts = def
-	for _, s := range styles {
-		switch s := s.(type) {
-		case LineHeight:
-			ts.lineHeight = s
-		case Width:
-			ts.width = s
-		case HAlign:
-			ts.hAlign = s
-		}
-	}
-}
-
 type Text struct {
 	Styled
-	TextStyles
 	XMLName xml.Name `xml:"Text"`
 	Text    string   `xml:",chardata"`
-}
-
-func (t *Text) ApplyStyles(def TextStyles) {
-	t.TextStyles = def
-	for _, s := range t.Styles {
-		switch s := s.(type) {
-		case LineHeight:
-			t.lineHeight = s
-		case Width:
-			t.width = s
-		case HAlign:
-			t.hAlign = s
-		}
-	}
 }
 
 type Image struct {
 	Styled
 	XMLName xml.Name `xml:"Image"`
 	Source  string   `xml:",chardata"`
-}
-
-func (i *Image) ApplyStyles() {
-
 }

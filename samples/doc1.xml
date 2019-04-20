@@ -22,19 +22,19 @@
 <Style>
 default-font{
     font-family: Arial;
-    font-size: 12;
+    font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-times{
     font-family: Times;
-    font-size: 12;
+    font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-small{
     font-family: Arial;
-    font-size: 8;
+    font-point-size: 6;
     font-style: normal;	
 }
 
@@ -57,14 +57,14 @@ Claustro etiam numbat decesse.
 
 <Font  class="default-font-small"/>
 <SetY y="25"/>
-<Text style="line-height: 1.5; width: -1; h-align: right">
+<Text style="line-height: 1.5; width: -1; h-align: right; ">
 i' bins\
 aha der Batman\
 Tel.: 0066 (289433) 423758\
 EMail: batman@dark.knight
 </Text>
 
-<Lf lines="1.5"/>
+<Lf lines="10.5"/>
 <Font class="default-font-times"/>
 <SetY y="70"/>
 <Box style="line-height: 1.5; width: 80; h-align: right; padding:0,0,0,0;">
@@ -79,7 +79,7 @@ Set sum stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
 </Box>
 
-<Lf lines="1.5"/>
+<Lf lines="4.5"/>
 <Font style="font-family: Arial;"/>
 
 <Text style="line-height: 1.5; width: -1; h-align: right;">
@@ -88,7 +88,7 @@ Set sum stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
 </Text>
 
-<Lf lines="1.5"/>
+<Lf lines="4.5"/>
 <Font style="font-family: Times;"/>
 
 <Text style="line-height: 1.5; width: -1; h-align: right;">

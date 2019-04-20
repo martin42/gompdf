@@ -1,5 +1,7 @@
 package gompdf
 
+import "github.com/martin42/gompdf/style"
+
 func fpdfOrientation(o Orientation) string {
 	switch o {
 	case OrientationPortrait:
@@ -18,18 +20,18 @@ func fpdfFormat(f Format) string {
 	return string(f)
 }
 
-func fpdfFontStyle(fs FontStyle, fw FontWeight, fd FontDecoration) string {
+func fpdfFontStyle(fnt style.Font) string {
 	s := ""
-	switch fs {
-	case FontStyleItalic:
+	switch fnt.Style {
+	case style.FontStyleItalic:
 		s += "I"
 	}
-	switch fw {
-	case FontWeightBold:
+	switch fnt.Weight {
+	case style.FontWeightBold:
 		s += "B"
 	}
-	switch fd {
-	case FontDecorationUnderline:
+	switch fnt.Decoration {
+	case style.FontDecorationUnderline:
 		s += "U"
 	}
 	return s

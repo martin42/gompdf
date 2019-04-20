@@ -17,6 +17,12 @@ type Applier struct {
 	fncs []ApplyFnc
 }
 
+func (a *Applier) Append(other *Applier) {
+	for _, f := range other.fncs {
+		a.fncs = append(a.fncs, f)
+	}
+}
+
 func DecodeApplier(r io.Reader) (*Applier, error) {
 	a := &Applier{
 		fncs: []ApplyFnc{},

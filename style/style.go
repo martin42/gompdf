@@ -6,4 +6,5 @@ type Styles struct {
 	Dimension
 	Align
 	Color
+	Draw
 }
