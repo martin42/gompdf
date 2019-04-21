@@ -50,14 +50,14 @@ default-font-small{
 <Font class="default-font"/>
 
 <Table style="border: 1,1,1,1; padding: 2,2,2,2;">
-    <Tr style="background-color: #CCCCCC; font-weight: bold;">
+    <Tr style="background-color: #DDDDFF; font-weight: bold;">
         <Td style="column-width: 60;">
             classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
         <Td style="column-width: 40;">classico 200</Td>
         <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
-    <Tr>
+    <Tr style="font-family: times;">
         <Td style="column-width: 60;">
             Classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle.\Clean __circumstances__ presume altered conceptions in treating encouters.
         </Td>
@@ -69,7 +69,7 @@ default-font-small{
             classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
         <Td style="column-width: 40;">classico 200</Td>
-        <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+        <Td style="font-family: times;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
 </Table>
 
