@@ -14,7 +14,7 @@ type textLine struct {
 }
 
 func (p *Processor) applyMarkdownFont(mdi markdown.Item, toFnt style.Font) {
-	fntStyles := ""
+	fntStyles := fpdfFontStyle(toFnt) // ""
 	if mdi.Italic {
 		fntStyles += "I"
 	}
@@ -73,6 +73,8 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 }
 
 func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font) {
+	Logf("write: font-weight: %s", fnt.Weight)
+
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
 	text = strings.Trim(text, " ")

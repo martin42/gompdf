@@ -14,7 +14,7 @@
     <PageMargins>
         <Left>30</Left>
         <Top>20</Top>
-        <Right>10</Right>
+        <Right>15</Right>
         <Bottom>20</Bottom>
     </PageMargins>
 </Default>
@@ -49,27 +49,27 @@ default-font-small{
 <Body>
 <Font class="default-font"/>
 
-<Table >
-    <Tr>
-        <Td style="column-width: 60; border: 1,1,1,1; padding: 2,2,2,2;">
+<Table style="border: 1,1,1,1; padding: 2,2,2,2;">
+    <Tr style="background-color: #CCCCCC; font-weight: bold;">
+        <Td style="column-width: 60;">
             classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
-        <Td style="column-width: 40; border: 1,1,1,1; background-color: #CCCCCC;; padding: 2,2,2,2;">classico 200</Td>
-        <Td style="border: 1,1,1,1;; padding: 2,2,2,2;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+        <Td style="column-width: 40;">classico 200</Td>
+        <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
     <Tr>
-        <Td style="column-width: 60; border: 1,1,1,1;; padding: 2,2,2,2;">
-            classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
+        <Td style="column-width: 60;">
+            Classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle.\Clean __circumstances__ presume altered conceptions in treating encouters.
         </Td>
-        <Td style="column-width: 40; border: 1,1,1,1; background-color: #CCCCCC;; padding: 2,2,2,2;">classico 200</Td>
-        <Td style="border: 1,1,1,1;; padding: 2,2,2,2;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+        <Td style="column-width: 40;">classico 200</Td>
+        <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
     <Tr>
-        <Td style="column-width: 60; border: 1,1,1,1;; padding: 2,2,2,2;">
+        <Td style="column-width: 60;">
             classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
-        <Td style="column-width: 40; border: 1,1,1,1; background-color: #CCCCCC;; padding: 2,2,2,2;">classico 200</Td>
-        <Td style="border: 1,1,1,1;; padding: 2,2,2,2;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+        <Td style="column-width: 40;">classico 200</Td>
+        <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
 </Table>
 

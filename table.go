@@ -72,21 +72,20 @@ type TableCell struct {
 	Content string   `xml:",chardata"`
 }
 
-func (p *Processor) ColumnWidths(t *Table, pageWidth float64, sty style.Styles) []float64 {
-	cellWidth := func(c *TableCell, def float64) float64 {
-		s := p.appliedStyles(c)
-		if s.Dimension.ColumnWidth > 0 {
-			return s.Dimension.ColumnWidth
-		}
-		return def
-	}
-
+func (p *Processor) ColumnWidths(t *Table, pageWidth float64, tableStyles style.Styles) []float64 {
 	cws := make([]float64, t.MaxColumnCount())
 	for _, row := range t.Rows {
+		rowStyles := tableStyles
+		row.Apply(p.doc.styleClasses, &rowStyles)
 		for i, c := range row.Cells {
-			w := cellWidth(c, -1)
-			if w > 0 && w > cws[i] {
-				cws[i] = w
+			cellStyles := rowStyles
+			c.Apply(p.doc.styleClasses, &cellStyles)
+			cw := float64(-1)
+			if cellStyles.Dimension.ColumnWidth > 0 {
+				cw = cellStyles.Dimension.ColumnWidth
+			}
+			if cw > 0 && cw > cws[i] {
+				cws[i] = cw
 			}
 		}
 	}
@@ -120,54 +119,56 @@ func (t Table) MaxColumnCount() int {
 	return m
 }
 
-func (p *Processor) renderTable(t *Table, sty style.Styles) {
+func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	if t.MaxColumnCount() == 0 {
 		return
 	}
 
-	cellHeight := func(c *TableCell, cellWidth float64) float64 {
-		s := p.appliedStyles(c)
-		textWidth := cellWidth - s.Box.Padding.Left - s.Box.Padding.Right
-		height := p.textHeight(c.Content, textWidth, s.Dimension.LineHeight, s.Font)
-		return height + s.Box.Padding.Top + s.Box.Padding.Bottom
+	cellHeight := func(c *TableCell, cellWidth float64, cellStyle style.Styles) float64 {
+		textWidth := cellWidth - cellStyle.Box.Padding.Left - cellStyle.Box.Padding.Right
+		height := p.textHeight(c.Content, textWidth, cellStyle.Dimension.LineHeight, cellStyle.Font)
+		return height + cellStyle.Box.Padding.Top + cellStyle.Box.Padding.Bottom
 	}
 
 	//if not further specified, distribute witdths uniformly
 	widthTotal, _ := p.pdf.GetPageSize()
 	leftM, _, rightM, _ := p.pdf.GetMargins()
 	widthTotal -= (leftM + rightM)
-	colWs := p.ColumnWidths(t, widthTotal, sty)
+	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
 
 	x0 := p.pdf.GetX()
 	y := p.pdf.GetY()
 	for _, row := range t.Rows {
+		rowStyles := tableStyles
+		row.Apply(p.doc.styleClasses, &rowStyles)
 		//calc row height
 		rowHeight := float64(0)
 		for i, c := range row.Cells {
-			ch := cellHeight(c, colWs[i])
+			cellStyles := rowStyles
+			c.Apply(p.doc.styleClasses, &cellStyles)
+			ch := cellHeight(c, colWs[i], cellStyles)
 			if ch > rowHeight {
 				rowHeight = ch
 			}
 		}
-
 		x := x0
 		for i, c := range row.Cells {
-			Logf("cell (%d): (x=%.1f) (y=%.1f)", i, x, y)
+			cellStyles := rowStyles
+			c.Apply(p.doc.styleClasses, &cellStyles)
 			p.pdf.SetXY(x, y)
 
-			s := p.appliedStyles(c)
 			x0 := x
 			y0 := y
 			x1 := x + colWs[i]
 			y1 := y + rowHeight
-			p.drawBox(x0, y0, x1, y1, s)
+			p.drawBox(x0, y0, x1, y1, cellStyles)
 
 			//Reset, to start writing at top left
-			p.pdf.SetY(y0 + s.Box.Padding.Top)
-			p.pdf.SetX(x0 + s.Box.Padding.Left)
+			p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+			p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
 
-			textWidth := colWs[i] - s.Box.Padding.Left - s.Box.Padding.Right
-			p.write(c.Content, textWidth, s.Dimension.LineHeight, s.Align.HAlign, s.Font)
+			textWidth := colWs[i] - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right
+			p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font)
 
 			x += colWs[i]
 		}
