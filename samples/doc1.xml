@@ -50,7 +50,7 @@ default-font-small{
 
 <Font class="default-font"/>
 
-<Box style="line-height: 1.5; width: 60; h-align: center; padding: 1,1,1,1; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
+<Box style="line-height: 1.5; width: 60; h-align: center; padding: 3,3,3,3; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
 Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
 Claustro etiam numbat decesse.
 </Box>
@@ -64,14 +64,15 @@ Tel.: 0066 (289433) 423758\
 EMail: batman@dark.knight
 </Text>
 
-<Lf lines="10.5"/>
 <Font class="default-font-times"/>
-<SetY y="70"/>
+<SetY y="80"/>
 <Box style="line-height: 1.5; width: 80; h-align: right; padding:0,0,0,0;">
 Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
 </Box>
+
+<Lf lines="3.0"/>
 
 <Box style="line-height: 1.5; width: 80; h-align: left; padding:0,0,0,0;">
 Lorem *ipsum* dolor minor. Novo\

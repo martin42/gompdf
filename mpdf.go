@@ -147,29 +147,6 @@ type Default struct {
 	PageMargins PageMargins   `xml:"PageMargins"`
 }
 
-// func (scs *StyleClasses) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-// 	for {
-// 		tok, err := d.Token()
-// 		if err != nil {
-// 			return err
-// 		}
-// 		switch tok := tok.(type) {
-// 		case xml.CharData:
-// 			pscs, err := ParseClasses(tok)
-// 			if err != nil {
-// 				return err
-// 			}
-// 			*scs = pscs
-// 		case xml.EndElement:
-// 			if tok == start.End() {
-// 				return nil
-// 			}
-// 		default:
-// 			return errors.Errorf("invalid xml token type for style element (%T)", tok)
-// 		}
-// 	}
-// }
-
 func (is *Instructions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	err := is.DecodeAttrs(start.Attr)
 	if err != nil {

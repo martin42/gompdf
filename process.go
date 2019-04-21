@@ -97,7 +97,6 @@ func (p *Processor) appliedStyles(i Instruction) style.Styles {
 
 func (p *Processor) processInstructions(is Instructions) {
 	for _, i := range is.iss {
-		//i.Apply(p.doc.styleClasses, &styles)
 		switch i := i.(type) {
 		case *Font:
 			i.Apply(p.doc.styleClasses, &p.currStyles)
@@ -111,7 +110,7 @@ func (p *Processor) processInstructions(is Instructions) {
 		case *SetXY:
 			p.pdf.SetXY(i.X, i.Y)
 		case *Box:
-			p.renderBox(i, p.appliedStyles(i))
+			p.renderTextBox(i.Text, p.appliedStyles(i))
 		case *Text:
 			p.renderText(i, p.appliedStyles(i))
 		case *Table:
@@ -143,45 +142,19 @@ func (p *Processor) renderText(text *Text, sty style.Styles) {
 	p.write(text.Text, p.effectiveWidth(sty.Dimension.Width), sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font)
 }
 
-func (p *Processor) renderBox(box *Box, sty style.Styles) {
-
+func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	x0, y0 := p.pdf.GetXY()
 	width := p.effectiveWidth(sty.Dimension.Width)
+
 	textWidth := width - sty.Box.Padding.Left - sty.Box.Padding.Right - 2 //without -2 it writes over the border
+	height := p.textHeight(text, textWidth, sty.Dimension.LineHeight, sty.Font)
 
-	height := p.textHeight(box.Text, textWidth, sty.Dimension.LineHeight, sty.Font)
-	y1 := y0 + height + sty.Box.Padding.Bottom
+	y1 := y0 + height + sty.Box.Padding.Top + sty.Box.Padding.Bottom
+	x1 := x0 + width
+	p.drawBox(x0, y0, x1, y1, sty)
 
-	p.pdf.SetLineWidth(sty.Draw.LineWidth)
-	p.pdf.SetDrawColor(int(sty.Color.Foreground.R), int(sty.Color.Foreground.G), int(sty.Color.Foreground.B))
-	p.pdf.SetFillColor(int(sty.Color.Background.R), int(sty.Color.Background.G), int(sty.Color.Background.B))
-
-	p.pdf.Rect(x0, y0, width, y1-y0, "F")
-	p.pdf.MoveTo(x0, y0)
-	if sty.Box.Border.Top > 0 {
-		p.pdf.LineTo(x0+width, y0)
-	} else {
-		p.pdf.MoveTo(x0+width, y0)
-	}
-	if sty.Box.Border.Right > 0 {
-		p.pdf.LineTo(x0+width, y1)
-	} else {
-		p.pdf.MoveTo(x0+width, y1)
-	}
-	if sty.Box.Border.Bottom > 0 {
-		p.pdf.LineTo(x0, y1)
-	} else {
-		p.pdf.MoveTo(x0, y1)
-	}
-	if sty.Box.Border.Left > 0 {
-		p.pdf.LineTo(x0, y0)
-	} else {
-		p.pdf.MoveTo(x0, y0)
-	}
-	p.pdf.DrawPath("D")
-	p.pdf.SetXY(x0, y1)
-
+	//Reset, to start writing at top left
 	p.pdf.SetY(y0 + sty.Box.Padding.Top)
 	p.pdf.SetX(x0 + sty.Box.Padding.Left)
-	p.write(box.Text, textWidth, sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font)
+	p.write(text, textWidth, sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font)
 }

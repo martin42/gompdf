@@ -24,6 +24,8 @@ func init() {
 	instructionRegistry.Register(&SetXY{})
 	instructionRegistry.Register(&Image{})
 	instructionRegistry.Register(&Table{})
+	instructionRegistry.Register(&TableRow{})
+	instructionRegistry.Register(&TableCell{})
 }
 
 type Instruction interface {

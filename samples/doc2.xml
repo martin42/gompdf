@@ -51,12 +51,25 @@ default-font-small{
 
 <Table >
     <Tr>
-        <Td style="width: 40;">
-            <Text>classico 100</Text>            
+        <Td style="column-width: 60; border: 1,1,1,1; padding: 2,2,2,2;">
+            classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
-        <Td style="width: 40;">
-            <Text>classico 200</Text>            
+        <Td style="column-width: 40; border: 1,1,1,1; background-color: #CCCCCC;; padding: 2,2,2,2;">classico 200</Td>
+        <Td style="border: 1,1,1,1;; padding: 2,2,2,2;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+    </Tr>
+    <Tr>
+        <Td style="column-width: 60; border: 1,1,1,1;; padding: 2,2,2,2;">
+            classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
+        <Td style="column-width: 40; border: 1,1,1,1; background-color: #CCCCCC;; padding: 2,2,2,2;">classico 200</Td>
+        <Td style="border: 1,1,1,1;; padding: 2,2,2,2;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+    </Tr>
+    <Tr>
+        <Td style="column-width: 60; border: 1,1,1,1;; padding: 2,2,2,2;">
+            classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
+        </Td>
+        <Td style="column-width: 40; border: 1,1,1,1; background-color: #CCCCCC;; padding: 2,2,2,2;">classico 200</Td>
+        <Td style="border: 1,1,1,1;; padding: 2,2,2,2;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
 </Table>
 

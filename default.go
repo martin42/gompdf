@@ -13,14 +13,15 @@ var DefaultStyle = style.Styles{
 		Decoration: style.FontDecorationNormal,
 	},
 	Box: style.Box{
-		Border:  style.Border{0, 0, 0, 0},
-		Padding: style.Padding{0, 0, 0, 0},
-		Margin:  style.Margin{0, 0, 0, 0},
+		Border:  style.Border{Left: 0, Top: 0, Right: 0, Bottom: 0},
+		Padding: style.Padding{Left: 0, Top: 0, Right: 0, Bottom: 0},
+		Margin:  style.Margin{Left: 0, Top: 0, Right: 0, Bottom: 0},
 	},
 	Dimension: style.Dimension{
-		Width:      -1,
-		Height:     -1,
-		LineHeight: 1.5,
+		Width:       -1,
+		Height:      -1,
+		ColumnWidth: -1,
+		LineHeight:  1.5,
 	},
 	Align: style.Align{
 		HAlign: style.HAlignLeft,
