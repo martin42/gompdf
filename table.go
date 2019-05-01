@@ -151,6 +151,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 				rowHeight = ch
 			}
 		}
+		Logf("row-height: %.1f", rowHeight)
 		x := x0
 		for i, c := range row.Cells {
 			cellStyles := rowStyles

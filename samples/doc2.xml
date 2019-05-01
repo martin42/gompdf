@@ -22,20 +22,27 @@
 <Style>
 default-font{
     font-family: Arial;
-    font-size: 12;
+    font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-times{
     font-family: Times;
-    font-size: 12;
+    font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-small{
     font-family: Arial;
-    font-size: 8;
+    font-point-size: 8;
     font-style: normal;	
+}
+
+font-times-big-italic-bold{
+    font-family: Times;
+    font-point-size: 16;
+    font-style: italic;	
+    font-weight: bold;
 }
 
 </Style>
@@ -68,8 +75,9 @@ default-font-small{
         <Td style="column-width: 60;">
             classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
-        <Td style="column-width: 40;">classico 200</Td>
-        <Td style="font-family: times;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+        <Td style="column-width: 40;">classico 200</Td>        
+        <!-- <Td>Fill the gap with exhausting stupid stuff, which nobody minds</Td> -->
+        <Td class="font-times-big-italic-bold" >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
 </Table>
 

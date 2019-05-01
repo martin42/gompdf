@@ -73,8 +73,8 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 }
 
 func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font) {
-	Logf("write: font-weight: %s", fnt.Weight)
-
+	Logf("write: font-weight: %s, lineHeight: %.1f", fnt.Weight, lineHeight)
+	p.applyFont(fnt)
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
 	text = strings.Trim(text, " ")
@@ -102,10 +102,11 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 		}
 		p.pdf.Ln(height)
 	}
-	p.applyFont(fnt)
+	p.applyFont(p.currStyles.Font)
 }
 
 func (p *Processor) textHeight(text string, width float64, lineHeight float64, fnt style.Font) float64 {
+	p.applyFont(fnt)
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
 	text = strings.Trim(text, " ")
@@ -120,6 +121,6 @@ func (p *Processor) textHeight(text string, width float64, lineHeight float64, f
 		}
 		textHeight += height
 	}
-	p.applyFont(fnt)
+	p.applyFont(p.currStyles.Font)
 	return textHeight
 }
