@@ -129,7 +129,7 @@ func (p *Processor) effectiveWidth(width float64) float64 {
 }
 
 func (p *Processor) applyFont(fnt style.Font) {
-	Logf("set-font: %s, %s, %.1f", fnt.Family, fpdfFontStyle(fnt), fnt.PointSize)
+	//Logf("set-font: %s, %s, %.1f", fnt.Family, fpdfFontStyle(fnt), fnt.PointSize)
 	p.pdf.SetFont(string(fnt.Family), fpdfFontStyle(fnt), float64(fnt.PointSize))
 }
 
@@ -158,4 +158,5 @@ func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	p.pdf.SetY(y0 + sty.Box.Padding.Top)
 	p.pdf.SetX(x0 + sty.Box.Padding.Left)
 	p.write(text, textWidth, sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font)
+	p.pdf.Ln(sty.Dimension.LineHeight + sty.Box.Padding.Bottom)
 }

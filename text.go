@@ -7,6 +7,30 @@ import (
 	"github.com/martin42/gompdf/style"
 )
 
+func (p *Processor) normalizedText(s string) string {
+	//remove carriage return and tabs
+	text := s
+	text = strings.Replace(text, "\r", "\n", -1)
+	text = strings.Replace(text, "\t", " ", -1)
+	//split into lines
+	lines := strings.Split(text, "\n")
+	tlines := []string{}
+	for _, line := range lines {
+		if line != "" {
+			tlines = append(tlines, strings.Trim(line, " "))
+		}
+	}
+	sn := strings.Join(tlines, " ")
+	var snt string
+	for {
+		snt = strings.Replace(sn, "  ", " ", -1)
+		if snt == sn {
+			return snt
+		}
+		sn = snt
+	}
+}
+
 type textLine struct {
 	mdWords               markdown.Items
 	textWidth             float64
@@ -14,7 +38,7 @@ type textLine struct {
 }
 
 func (p *Processor) applyMarkdownFont(mdi markdown.Item, toFnt style.Font) {
-	fntStyles := fpdfFontStyle(toFnt) // ""
+	fntStyles := fpdfFontStyle(toFnt)
 	if mdi.Italic {
 		fntStyles += "I"
 	}
@@ -66,6 +90,7 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 	}
 	for _, l := range lines {
 		if len(l.mdWords) > 0 {
+			l.mdWords[0].Text = strings.TrimLeft(l.mdWords[0].Text, " ")
 			l.mdWords[len(l.mdWords)-1].Text = strings.TrimRight(l.mdWords[len(l.mdWords)-1].Text, " ")
 		}
 	}
@@ -73,11 +98,9 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 }
 
 func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font) {
-	Logf("write: font-weight: %s, lineHeight: %.1f", fnt.Weight, lineHeight)
+	//Logf("write: font-weight: %s, lineHeight: %.1f", fnt.Weight, lineHeight)
 	p.applyFont(fnt)
-	text = strings.Replace(text, "\n", " ", -1)
-	text = strings.Replace(text, "\r", " ", -1)
-	text = strings.Trim(text, " ")
+	text = p.normalizedText(text)
 	_, fontHeight := p.pdf.GetFontSize()
 	height := fontHeight * lineHeight
 	xLeft := p.pdf.GetX()
@@ -107,9 +130,7 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 
 func (p *Processor) textHeight(text string, width float64, lineHeight float64, fnt style.Font) float64 {
 	p.applyFont(fnt)
-	text = strings.Replace(text, "\n", " ", -1)
-	text = strings.Replace(text, "\r", " ", -1)
-	text = strings.Trim(text, " ")
+	text = p.normalizedText(text)
 	_, fontHeight := p.pdf.GetFontSize()
 	height := fontHeight * lineHeight
 	mdWords := markdown.NewProcessor().Process(text).WordItems()

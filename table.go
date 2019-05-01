@@ -54,6 +54,31 @@ func (row *TableRow) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	}
 }
 
+func (cell *TableCell) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	for {
+		token, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch t := token.(type) {
+		case xml.EndElement:
+			if t == start.End() {
+				return nil
+			}
+		case xml.StartElement:
+			Logf("decode cell instruction: %s", t.Name.Local)
+			i, err := instructionRegistry.Decode(d, t)
+			if err != nil {
+				Logf("decode cell instruction failed: %v", err)
+				continue
+			}
+			cell.Instructions = append(cell.Instructions, i)
+		case xml.CharData:
+			cell.Content += string(t)
+		}
+	}
+}
+
 type Table struct {
 	Styled
 	XMLName xml.Name    `xml:"Table"`
@@ -68,8 +93,9 @@ type TableRow struct {
 
 type TableCell struct {
 	Styled
-	XMLName xml.Name `xml:"Td"`
-	Content string   `xml:",chardata"`
+	XMLName      xml.Name `xml:"Td"`
+	Content      string   `xml:",chardata"`
+	Instructions []Instruction
 }
 
 func (p *Processor) ColumnWidths(t *Table, pageWidth float64, tableStyles style.Styles) []float64 {
@@ -151,7 +177,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 				rowHeight = ch
 			}
 		}
-		Logf("row-height: %.1f", rowHeight)
+		//Logf("row-height: %.1f", rowHeight)
 		x := x0
 		for i, c := range row.Cells {
 			cellStyles := rowStyles
@@ -171,9 +197,20 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 			textWidth := colWs[i] - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right
 			p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font)
 
+			for _, inst := range c.Instructions {
+				switch inst := inst.(type) {
+				case *Box:
+					p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+					p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
+					p.renderTextBox(inst.Text, p.appliedStyles(inst))
+				}
+			}
+
 			x += colWs[i]
 		}
 		y += rowHeight
 		p.pdf.Ln(-1)
 	}
+	p.pdf.SetXY(x0, y)
+	p.pdf.Ln(-1)
 }

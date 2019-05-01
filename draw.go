@@ -10,7 +10,7 @@ func (p *Processor) drawBox(x0, y0, x1, y1 float64, sty style.Styles) {
 	width := x1 - x0
 	height := y1 - y0
 	p.pdf.Rect(x0, y0, width, height, "F")
-	p.pdf.MoveTo(x0, y0)
+	p.pdf.MoveTo(x0-sty.Draw.LineWidth/2, y0)
 	if sty.Box.Border.Top > 0 {
 		p.pdf.LineTo(x0+width, y0)
 	} else {
