@@ -107,8 +107,8 @@ func (p *Processor) ColumnWidths(t *Table, pageWidth float64, tableStyles style.
 			cellStyles := rowStyles
 			c.Apply(p.doc.styleClasses, &cellStyles)
 			cw := float64(-1)
-			if cellStyles.Dimension.ColumnWidth > 0 {
-				cw = cellStyles.Dimension.ColumnWidth
+			if cellStyles.Table.ColumnWidth > 0 {
+				cw = cellStyles.Table.ColumnWidth
 			}
 			if cw > 0 && cw > cws[i] {
 				cws[i] = cw
@@ -179,14 +179,26 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 		}
 		//Logf("row-height: %.1f", rowHeight)
 		x := x0
-		for i, c := range row.Cells {
+		colOffset := 0
+		for _, c := range row.Cells {
 			cellStyles := rowStyles
 			c.Apply(p.doc.styleClasses, &cellStyles)
 			p.pdf.SetXY(x, y)
 
 			x0 := x
 			y0 := y
-			x1 := x + colWs[i]
+			ws := colWs[colOffset]
+			x1 := x + ws
+			if cellStyles.Table.ColumnSpan > 1 {
+				for cs := 1; cs < cellStyles.Table.ColumnSpan; cs++ {
+					if colOffset+cs < len(colWs) {
+						x1 += colWs[colOffset+cs]
+						ws += colWs[colOffset+cs]
+					}
+				}
+			}
+			colOffset += cellStyles.Table.ColumnSpan
+
 			y1 := y + rowHeight
 			p.drawBox(x0, y0, x1, y1, cellStyles)
 
@@ -194,7 +206,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 			p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
 			p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
 
-			textWidth := colWs[i] - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right
+			textWidth := ws - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right
 			p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
 
 			for _, inst := range c.Instructions {
@@ -210,7 +222,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 				}
 			}
 
-			x += colWs[i]
+			x += ws //colWs[i]
 		}
 		y += rowHeight
 		p.pdf.Ln(-1)

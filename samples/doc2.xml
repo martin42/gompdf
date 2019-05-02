@@ -100,13 +100,14 @@ percent-bar {
         </Td>
     </Tr>
     <Tr>
-        <Td style="column-width: 40;">        
+        <Td style="column-width: 40; column-span: 2;">        
             <Image>bug.png</Image>
             <Box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 25; background-color: #eeeeee;"></Box>
             <Box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 15;">
                 45,67 %
             </Box>
         </Td> 
+        <Td style="column-width: 40;">classico 9400</Td>
     </Tr>
 </Table>
 
