@@ -97,9 +97,10 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 	return lines
 }
 
-func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font) {
+func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font, cr style.RGB) {
 	//Logf("write: font-weight: %s, lineHeight: %.1f", fnt.Weight, lineHeight)
 	p.applyFont(fnt)
+	p.pdf.SetTextColor(int(cr.R), int(cr.G), int(cr.B))
 	text = p.normalizedText(text)
 	_, fontHeight := p.pdf.GetFontSize()
 	height := fontHeight * lineHeight
@@ -125,6 +126,7 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 		}
 		p.pdf.Ln(height)
 	}
+	p.pdf.SetTextColor(int(p.currStyles.Color.Text.R), int(p.currStyles.Color.Text.G), int(p.currStyles.Color.Text.B))
 	p.applyFont(p.currStyles.Font)
 }
 

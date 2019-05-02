@@ -83,11 +83,13 @@ percent-bar {
         <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
     <Tr>
-        <Td style="column-width: 60;">
+        <Td style="column-width: 60; text-color: #880000;">
             classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
         <Td style="column-width: 40;">        
-            <Box class="percent-bar" style="width: 30;">
+            <Image>bug.png</Image>
+            <Box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 25; background-color: #eeeeee;"></Box>
+            <Box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 15;">
                 45,67 %
             </Box>
         </Td>        
@@ -97,7 +99,19 @@ percent-bar {
         \Or just leave it as it is
         </Td>
     </Tr>
+    <Tr>
+        <Td style="column-width: 40;">        
+            <Image>bug.png</Image>
+            <Box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 25; background-color: #eeeeee;"></Box>
+            <Box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 15;">
+                45,67 %
+            </Box>
+        </Td> 
+    </Tr>
 </Table>
+
+<Image>bug.png</Image>
+<Lf lines="3.0"/>
 
 <Box style="line-height: 1.5; width: 60; h-align: center; padding: 3,3,3,3; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
 Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.

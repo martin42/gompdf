@@ -115,6 +115,8 @@ func (p *Processor) processInstructions(is Instructions) {
 			p.renderText(i, p.appliedStyles(i))
 		case *Table:
 			p.renderTable(i, p.appliedStyles(i))
+		case *Image:
+			p.renderImage(i, p.appliedStyles(i))
 		}
 	}
 }
@@ -140,15 +142,27 @@ func (p *Processor) processLineFeed(lf *LineFeed, sty style.Styles) {
 }
 
 func (p *Processor) renderText(text *Text, sty style.Styles) {
-	p.write(text.Text, p.effectiveWidth(sty.Dimension.Width), sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font)
+	p.write(text.Text, p.effectiveWidth(sty.Dimension.Width), sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font, sty.Color.Text)
 }
 
 func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	x0, y0 := p.pdf.GetXY()
-	width := p.effectiveWidth(sty.Dimension.Width)
+	x0 += sty.Dimension.OffsetX
+	y0 += sty.Dimension.OffsetY
 
+	width := p.effectiveWidth(sty.Dimension.Width)
 	textWidth := width - sty.Box.Padding.Left - sty.Box.Padding.Right - 2 //without -2 it writes over the border
-	height := p.textHeight(text, textWidth, sty.Dimension.LineHeight, sty.Font)
+
+	var height float64
+	if sty.Dimension.Height < 0 {
+		if text != "" {
+			height = p.textHeight(text, textWidth, sty.Dimension.LineHeight, sty.Font)
+		} else {
+			height = p.textHeight("Üg", textWidth, sty.Dimension.LineHeight, sty.Font)
+		}
+	} else {
+		height = sty.Dimension.Height
+	}
 
 	y1 := y0 + height + sty.Box.Padding.Top + sty.Box.Padding.Bottom
 	x1 := x0 + width
@@ -157,6 +171,13 @@ func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	//Reset, to start writing at top left
 	p.pdf.SetY(y0 + sty.Box.Padding.Top)
 	p.pdf.SetX(x0 + sty.Box.Padding.Left)
-	p.write(text, textWidth, sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font)
+	p.write(text, textWidth, sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font, sty.Color.Text)
 	p.pdf.Ln(sty.Dimension.LineHeight + sty.Box.Padding.Bottom)
+}
+
+func (p *Processor) renderImage(img *Image, sty style.Styles) {
+	x0, y0 := p.pdf.GetXY()
+	x0 += sty.Dimension.OffsetX
+	y0 += sty.Dimension.OffsetY
+	p.pdf.ImageOptions(img.Source, x0, y0, sty.Dimension.Width, sty.Dimension.Height, false, gofpdf.ImageOptions{}, 0, "")
 }

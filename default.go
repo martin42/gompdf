@@ -22,6 +22,8 @@ var DefaultStyle = style.Styles{
 		Height:      -1,
 		ColumnWidth: -1,
 		LineHeight:  1.5,
+		OffsetX:     0,
+		OffsetY:     0,
 	},
 	Align: style.Align{
 		HAlign: style.HAlignLeft,
@@ -29,6 +31,7 @@ var DefaultStyle = style.Styles{
 	},
 	Color: style.Color{
 		Foreground: style.Black,
+		Text:       style.Black,
 		Background: style.White,
 	},
 }

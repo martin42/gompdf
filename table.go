@@ -195,7 +195,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 			p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
 
 			textWidth := colWs[i] - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right
-			p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font)
+			p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
 
 			for _, inst := range c.Instructions {
 				switch inst := inst.(type) {
@@ -203,6 +203,10 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 					p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
 					p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
 					p.renderTextBox(inst.Text, p.appliedStyles(inst))
+				case *Image:
+					p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+					p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
+					p.renderImage(inst, p.appliedStyles(inst))
 				}
 			}
 

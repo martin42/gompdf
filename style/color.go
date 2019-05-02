@@ -46,5 +46,6 @@ func (c *RGB) UnmarshalStyle(s string) error {
 
 type Color struct {
 	Foreground RGB `style:"color"`
+	Text       RGB `style:"text-color"`
 	Background RGB `style:"background-color"`
 }
