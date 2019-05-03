@@ -66,7 +66,6 @@ func (cell *TableCell) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 				return nil
 			}
 		case xml.StartElement:
-			Logf("decode cell instruction: %s", t.Name.Local)
 			i, err := instructionRegistry.Decode(d, t)
 			if err != nil {
 				Logf("decode cell instruction failed: %v", err)

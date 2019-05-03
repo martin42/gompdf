@@ -21,8 +21,6 @@ func ParseAndBuild(source string, target string) error {
 		return err
 	}
 	fmt.Printf("loaded (%s) ... in (%s)\n", source, time.Since(start))
-	//fmt.Printf("doc: (%#v)\n", doc)
-	doc.traceBody()
 
 	outF, err := os.Create(target)
 	if err != nil {
@@ -64,15 +62,6 @@ func LoadFromFile(file string) (*Document, error) {
 	}
 	defer f.Close()
 	return Load(f)
-}
-
-func (doc *Document) traceBody() {
-	for _, i := range doc.Body.iss {
-		switch i := i.(type) {
-		case *Table:
-			fmt.Printf("table: %#v", *i)
-		}
-	}
 }
 
 func (doc *Document) StyleClasses() style.Classes {

@@ -31,7 +31,7 @@ func (is *Items) add(text string, italic, bold, code bool, nl bool) {
 	})
 }
 
-func (i Item) WordItems() Items {
+func (i Item) WordItems(tr func(string) string) Items {
 	is := Items{}
 	words := []string{}
 	currWord := ""
@@ -48,15 +48,15 @@ func (i Item) WordItems() Items {
 		words = append(words, currWord)
 	}
 	for _, word := range words {
-		is.add(word, i.Italic, i.Bold, i.Code, i.Newline)
+		is.add(tr(word), i.Italic, i.Bold, i.Code, i.Newline)
 	}
 	return is
 }
 
-func (is Items) WordItems() Items {
+func (is Items) WordItems(tr func(string) string) Items {
 	wis := Items{}
 	for _, i := range is {
-		wis = append(wis, i.WordItems()...)
+		wis = append(wis, i.WordItems(tr)...)
 	}
 	return wis
 }

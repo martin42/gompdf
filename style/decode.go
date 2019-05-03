@@ -35,93 +35,136 @@ type Unmarshaler interface {
 	UnmarshalStyle(v string) error
 }
 
-type Decoder struct {
-	reader io.Reader
-	raw    map[string]string
+type ApplyFnc func(styles *Styles)
+
+func ApplyNone(styles *Styles) {}
+
+type Applier struct {
+	fncs []ApplyFnc
 }
 
-func NewDecoder(r io.Reader) *Decoder {
-	return &Decoder{
-		reader: r,
+func (a *Applier) Append(other *Applier) {
+	for _, f := range other.fncs {
+		a.fncs = append(a.fncs, f)
 	}
 }
 
-func (d *Decoder) Decode(styles *Styles) error {
-	b, err := ioutil.ReadAll(d.reader)
-	if err != nil {
-		return err
+func DecodeApplier(r io.Reader) (*Applier, error) {
+	a := &Applier{
+		fncs: []ApplyFnc{},
 	}
-	d.raw, err = parseRaw(string(b))
+	b, err := ioutil.ReadAll(r)
 	if err != nil {
-		return errors.Wrap(err, "parse raw")
+		return nil, errors.Wrap(err, "read-all")
 	}
-	err = d.decode(styles, "")
+	raw, err := parseRaw(string(b))
 	if err != nil {
-		return err
+		return nil, errors.Wrap(err, "parse-raw")
 	}
-	return nil
+	protoType := reflect.TypeOf(Styles{})
+	for k, v := range raw {
+		fnc, found, err := makeApplyFnc(protoType, k, v, []int{})
+		if err != nil {
+			return nil, errors.Wrapf(err, "make-apply-fnc (%s, %s)", k, v)
+		}
+		if !found {
+			continue
+		}
+		a.fncs = append(a.fncs, fnc)
+	}
+	return a, nil
 }
 
-func (d *Decoder) decode(v interface{}, styleName string) error {
-	styleValue, containsStyle := d.raw[styleName]
-	if containsStyle {
-		if um, impls := v.(Unmarshaler); impls {
-			return um.UnmarshalStyle(styleValue)
+func (a *Applier) Apply(styles *Styles) {
+	for _, fnc := range a.fncs {
+		fnc(styles)
+	}
+}
+
+func makeApplyFnc(rt reflect.Type, key, val string, indexPath []int) (ApplyFnc, bool, error) {
+	for i := 0; i < rt.NumField(); i++ {
+		field := rt.Field(i)
+		currIndexPath := appendedCopy(indexPath, i)
+		if t := field.Tag.Get("style"); t == key {
+			var setValue func(reflect.Value)
+			um, impls := reflect.New(field.Type).Interface().(Unmarshaler)
+			if impls {
+				err := um.UnmarshalStyle(val)
+				if err != nil {
+					return nil, false, err
+				}
+				setValue = func(rv reflect.Value) {
+					rv.Set(reflect.ValueOf(um).Elem())
+				}
+			} else {
+				var err error
+				setValue, err = makeSetValueFnc(field.Type.Kind(), val)
+				if err != nil {
+					return nil, false, errors.Wrapf(err, "make set value func (%s, %s)", key, val)
+				}
+			}
+
+			return func(s *Styles) {
+				rVal := reflect.ValueOf(s).Elem()
+				for _, fIdx := range currIndexPath {
+					rVal = rVal.Field(fIdx)
+				}
+				setValue(rVal)
+			}, true, nil
+		}
+
+		if field.Type.Kind() == reflect.Struct {
+			fnc, found, err := makeApplyFnc(field.Type, key, val, currIndexPath)
+			if err != nil {
+				return nil, true, err
+			} else if found {
+				return fnc, true, nil
+			}
 		}
 	}
-	k := reflect.ValueOf(v).Kind()
-	if k != reflect.Ptr {
-		return errors.Errorf("passed interface is not pointer but (%s)", k)
-	}
-	rVal := reflect.ValueOf(v).Elem()
-	if rVal.Kind() == reflect.Struct {
-		return d.decodePtrToStruct(v)
-	}
-	if !containsStyle {
-		return nil
-	}
-	switch rVal.Kind() {
+	return nil, false, nil
+}
+
+func makeSetValueFnc(kind reflect.Kind, styleValue string) (func(v reflect.Value), error) {
+	switch kind {
 	case reflect.String:
-		rVal.SetString(styleValue)
+		return func(v reflect.Value) {
+			v.SetString(styleValue)
+		}, nil
 	case reflect.Float32, reflect.Float64:
 		f, err := strconv.ParseFloat(styleValue, 64)
 		if err != nil {
-			return errors.Wrapf(err, "parse-float (%s)", styleValue)
+			return nil, errors.Wrapf(err, "parse-float (%s)", styleValue)
 		}
-		rVal.SetFloat(f)
+		return func(v reflect.Value) {
+			v.SetFloat(f)
+		}, nil
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		n, err := strconv.ParseInt(styleValue, 10, 64)
 		if err != nil {
-			return errors.Wrapf(err, "parse-int (%s)", styleValue)
+			return nil, errors.Wrapf(err, "parse-int (%s)", styleValue)
 		}
-		rVal.SetInt(n)
+		return func(v reflect.Value) {
+			v.SetInt(n)
+		}, nil
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		n, err := strconv.ParseUint(styleValue, 10, 64)
 		if err != nil {
-			return errors.Wrapf(err, "parse-uint (%s)", styleValue)
+			return nil, errors.Wrapf(err, "parse-uint (%s)", styleValue)
 		}
-		rVal.SetUint(n)
+		return func(v reflect.Value) {
+			v.SetUint(n)
+		}, nil
 	default:
-		return errors.Errorf("cannot decode %s", rVal.Kind())
+		return nil, errors.Errorf("unsupported style kind (%s)", kind)
 	}
-	return nil
 }
 
-func (d *Decoder) decodePtrToStruct(v interface{}) error {
-	rVal := reflect.ValueOf(v).Elem()
-	rType := rVal.Type()
-	for i := 0; i < rVal.NumField(); i++ {
-		field := rVal.Field(i)
-		if !field.CanAddr() {
-			continue
-		}
-		if !field.CanInterface() {
-			continue
-		}
-		err := d.decode(field.Addr().Interface(), rType.Field(i).Tag.Get("style"))
-		if err != nil {
-			return err
-		}
+func appendedCopy(sl []int, a int) []int {
+	c := make([]int, len(sl)+1)
+	for i, v := range sl {
+		c[i] = v
 	}
-	return nil
+	c[len(c)-1] = a
+	return c
 }

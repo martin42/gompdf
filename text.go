@@ -105,7 +105,7 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 	_, fontHeight := p.pdf.GetFontSize()
 	height := fontHeight * lineHeight
 	xLeft := p.pdf.GetX()
-	mdWords := markdown.NewProcessor().Process(text).WordItems()
+	mdWords := markdown.NewProcessor().Process(text).WordItems(p.translateUnicode)
 	lines := p.textLines(mdWords, width, fnt)
 	for _, line := range lines {
 		if len(line.mdWords) == 0 {
@@ -135,7 +135,7 @@ func (p *Processor) textHeight(text string, width float64, lineHeight float64, f
 	text = p.normalizedText(text)
 	_, fontHeight := p.pdf.GetFontSize()
 	height := fontHeight * lineHeight
-	mdWords := markdown.NewProcessor().Process(text).WordItems()
+	mdWords := markdown.NewProcessor().Process(text).WordItems(p.translateUnicode)
 	lines := p.textLines(mdWords, width, fnt)
 	textHeight := float64(0)
 	for _, line := range lines {

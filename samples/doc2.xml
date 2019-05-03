@@ -59,6 +59,11 @@ percent-bar {
 </Style>
 
 <Header>    
+    <SetY y="5"/>
+    <Text>
+        Gimme' Shelter or Convenience
+    </Text>
+    <SetY y="20"/>
 </Header> 
 
 <Footer>    
@@ -68,19 +73,32 @@ percent-bar {
 <Font class="default-font"/>
 
 <Table style="border: 1,1,1,1; padding: 2,2,2,2;">
+    <Tr>
+        <Td style="column-width:80; h-align: left;">
+            Hier muss was stehen, damit alles sch ö ü ä Ö Ü Ä n ordentlich in Ordnung ist.
+        </Td>
+        <Td style="column-width:80; h-align: right;">
+            Hier steht\
+            was anderes\
+            oder\
+            auch nicht
+        </Td>
+    </Tr>
+</Table>
+
+<Table style="border: 1,1,1,1; padding: 2,2,2,2;">
     <Tr style="background-color: #DDDDFF; font-weight: bold;">
         <Td style="column-width: 60;">
             classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
         </Td>
         <Td style="column-width: 40;">classico 200</Td>
-        <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+        <Td style="column-width: 60;">Fill the gap with exhausting stupid stuff, which nobody minds</Td>
     </Tr>
     <Tr style="font-family: times;">
         <Td style="column-width: 60;">
             Classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle.\Clean __circumstances__ presume altered conceptions in treating encouters.
         </Td>
-        <Td style="column-width: 40;">classico 200</Td>
-        <Td >Fill the gap with exhausting stupid stuff, which nobody minds</Td>
+        <Td style="column-span: 2;">classico 200</Td>        
     </Tr>
     <Tr>
         <Td style="column-width: 60; text-color: #880000;">
@@ -92,8 +110,7 @@ percent-bar {
             <Box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 15;">
                 45,67 %
             </Box>
-        </Td>        
-        <!-- <Td>Fill the gap with exhausting stupid stuff, which nobody minds</Td> -->
+        </Td>                
         <Td class="font-times-big-italic-bold" >
         Fill the gap with exhausting stupid stuff, which nobody minds                    
         \Or just leave it as it is
@@ -107,7 +124,7 @@ percent-bar {
                 45,67 %
             </Box>
         </Td> 
-        <Td style="column-width: 40;">classico 9400</Td>
+        <Td>classico 9400</Td>
     </Tr>
 </Table>
 
