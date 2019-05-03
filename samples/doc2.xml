@@ -61,7 +61,7 @@ percent-bar {
 <Header>    
     <SetY y="5"/>
     <Text>
-        Gimme' Shelter or Convenience
+        Gimme' Shelter or Convenience • et {cp} / {np}
     </Text>
     <SetY y="20"/>
 </Header> 
@@ -137,6 +137,68 @@ Claustro etiam numbat decesse.
 </Box>
 
 <Text>Sic!</Text>
+
+<Lf lines="2.0"/>
+
+<!-- <Text>Cis!</Text> -->
+
+<Box style="offset-x: 10; line-height: 1.5; width: 60; h-align: right; padding: 5,5,5,5; line-width: 0.3; color: #0000FF; background-color: #aaFFaa; border: 1,1,1,1;">
+Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
+Claustro etiam numbat decesse.\
+When birds encapsulate\
+recent wheather phenomina\
+cold authors trend\
+to repeat winter's\
+perceptions\
+always and never
+</Box>
+
+<Lf lines="2.0"/>
+
+<Box style="offset-x: 10; line-height: 1.5; width: 90; h-align: center; padding: 5,5,5,5; line-width: 0.3; text-color: #eeeeee; color: #0000FF; background-color: #5555aa; border: 1,1,1,1;">
+Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
+Claustro etiam numbat decesse.\
+When birds encapsulate\
+recent wheather phenomina\
+cold authors trend\
+to repeat winter's\
+perceptions\
+always and never
+</Box>
+
+<Text>Sic!</Text>
+<Lf lines="2.0"/>
+
+<Table style="border: 1,1,1,1; padding: 2,2,2,2;">
+    <Tr>
+        <Td>__1__: c4 e4; kf3 c6</Td>
+        <Td style="h-align: center;">A momentary lapse of causes</Td>
+    </Tr>
+    <Tr>
+        <Td>__2__: c4 e4; kf3 c6</Td>
+        <Td style="h-align: center;">A momentary lapse of causes</Td>
+    </Tr>
+    <Tr>
+        <Td>__3__: c4 e4; kf3 c6</Td>
+        <Td style="h-align: center;">A momentary lapse of causes</Td>
+    </Tr>
+    <Tr>
+        <Td>__4__: c4 e4; kf3 c6</Td>
+        <Td style="h-align: center;">A momentary lapse of causes</Td>
+    </Tr>
+    <Tr>
+        <Td>__5__: c4 e4; kf3 c6</Td>
+        <Td style="h-align: center;">A momentary lapse of causes</Td>
+    </Tr>
+    <Tr>
+        <Td>__6__: c4 e4; kf3 c6</Td>
+        <Td style="h-align: center;">A momentary lapse of causes</Td>
+    </Tr>
+    <Tr>
+        <Td>__7__: c4 e4; kf3 c6</Td>
+        <Td style="h-align: right;">lapse of reasons</Td>
+    </Tr>
+</Table>
 
 </Body> 
 

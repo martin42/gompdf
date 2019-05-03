@@ -3,6 +3,7 @@ package gompdf
 import (
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/jung-kurt/gofpdf"
@@ -18,7 +19,7 @@ type Processor struct {
 	fontDir  string
 	codePage string
 
-	translateUnicode func(string) string
+	transformText func(string) string
 
 	currStyles style.Styles
 }
@@ -63,7 +64,13 @@ func (p *Processor) Process(w io.Writer) error {
 		fpdfFormat(p.doc.Default.Format),
 		p.fontDir,
 	)
-	p.translateUnicode = p.pdf.UnicodeTranslatorFromDescriptor(p.codePage)
+	p.pdf.AliasNbPages("{np}")
+	translateUnicode := p.pdf.UnicodeTranslatorFromDescriptor(p.codePage)
+	p.transformText = func(s string) string {
+		ts := strings.Replace(s, "{cp}", fmt.Sprintf("%d", p.pdf.PageNo()), -1)
+		return translateUnicode(ts)
+	}
+
 	p.pdf.SetHeaderFunc(func() {
 		p.processInstructions(p.doc.Header)
 	})
@@ -146,10 +153,6 @@ func (p *Processor) renderText(text *Text, sty style.Styles) {
 }
 
 func (p *Processor) renderTextBox(text string, sty style.Styles) {
-	x0, y0 := p.pdf.GetXY()
-	x0 += sty.Dimension.OffsetX
-	y0 += sty.Dimension.OffsetY
-
 	width := p.effectiveWidth(sty.Dimension.Width)
 	textWidth := width - sty.Box.Padding.Left - sty.Box.Padding.Right - 2 //without -2 it writes over the border
 
@@ -164,6 +167,15 @@ func (p *Processor) renderTextBox(text string, sty style.Styles) {
 		height = sty.Dimension.Height
 	}
 
+	x0, y0 := p.pdf.GetXY()
+	_, ph := p.pdf.GetPageSize()
+	if y0+height >= ph {
+		p.pdf.AddPage()
+		x0, y0 = p.pdf.GetXY()
+	}
+
+	x0 += sty.Dimension.OffsetX
+	y0 += sty.Dimension.OffsetY
 	y1 := y0 + height + sty.Box.Padding.Top + sty.Box.Padding.Bottom
 	x1 := x0 + width
 	p.drawBox(x0, y0, x1, y1, sty)

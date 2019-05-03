@@ -157,9 +157,12 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 
 	//if not further specified, distribute witdths uniformly
 	widthTotal, _ := p.pdf.GetPageSize()
-	leftM, _, rightM, _ := p.pdf.GetMargins()
+	leftM, _, rightM, bottomM := p.pdf.GetMargins()
 	widthTotal -= (leftM + rightM)
 	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
+
+	_, ph := p.pdf.GetPageSize()
+	ph -= (bottomM)
 
 	x0 := p.pdf.GetX()
 	y := p.pdf.GetY()
@@ -176,7 +179,12 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 				rowHeight = ch
 			}
 		}
-		//Logf("row-height: %.1f", rowHeight)
+
+		if y+rowHeight >= ph {
+			p.pdf.AddPage()
+			y = p.pdf.GetY()
+		}
+
 		x := x0
 		colOffset := 0
 		for _, c := range row.Cells {
@@ -205,7 +213,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 			p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
 			p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
 
-			textWidth := ws - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right
+			textWidth := ws - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right - 2 //wihout 2 it doesn't fit
 			p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
 
 			for _, inst := range c.Instructions {
