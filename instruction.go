@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/martin42/gompdf/style"
+	"github.com/mazzegi/gompdf/style"
 	"github.com/pkg/errors"
 )
 

@@ -1,7 +1,7 @@
 package gompdf
 
 import (
-	"github.com/martin42/gompdf/style"
+	"github.com/mazzegi/gompdf/style"
 )
 
 var DefaultStyle = style.Styles{

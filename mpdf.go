@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/martin42/gompdf/style"
+	"github.com/mazzegi/gompdf/style"
 
 	"github.com/pkg/errors"
 )

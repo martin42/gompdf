@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/martin42/gompdf"
+	"github.com/mazzegi/gompdf"
 )
 
 func main() {

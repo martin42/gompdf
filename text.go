@@ -3,8 +3,8 @@ package gompdf
 import (
 	"strings"
 
-	"github.com/martin42/gompdf/markdown"
-	"github.com/martin42/gompdf/style"
+	"github.com/mazzegi/gompdf/markdown"
+	"github.com/mazzegi/gompdf/style"
 )
 
 func (p *Processor) normalizedText(s string) string {

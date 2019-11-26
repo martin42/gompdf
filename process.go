@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/jung-kurt/gofpdf"
-	"github.com/martin42/gompdf/style"
+	"github.com/mazzegi/gompdf/style"
 )
 
 type ProcessOption func(p *Processor) error

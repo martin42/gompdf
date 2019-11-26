@@ -3,7 +3,7 @@ package gompdf
 import (
 	"encoding/xml"
 
-	"github.com/martin42/gompdf/style"
+	"github.com/mazzegi/gompdf/style"
 )
 
 func (tab *Table) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {

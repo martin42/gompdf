@@ -1,6 +1,6 @@
 package gompdf
 
-import "github.com/martin42/gompdf/style"
+import "github.com/mazzegi/gompdf/style"
 
 func (p *Processor) drawBox(x0, y0, x1, y1 float64, sty style.Styles) {
 	p.pdf.SetLineWidth(sty.Draw.LineWidth)

@@ -1,6 +1,6 @@
 package gompdf
 
-import "github.com/martin42/gompdf/style"
+import "github.com/mazzegi/gompdf/style"
 
 func fpdfOrientation(o Orientation) string {
 	switch o {
