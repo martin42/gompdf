@@ -101,12 +101,11 @@ func (p *Processor) Process(s string) Items {
 			i += 1
 		} else {
 			if len(items) == 0 {
-				items.add(string(b), italic, bold, code, false)
-			} else {
-				ibs := []byte(items[len(items)-1].Text)
-				ibs = append(ibs, b)
-				items[len(items)-1].Text = string(ibs)
+				items.add("", italic, bold, code, false)
 			}
+			ibs := []byte(items[len(items)-1].Text)
+			ibs = append(ibs, b)
+			items[len(items)-1].Text = string(ibs)
 			i += 1
 		}
 	}

@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/martin42/gompdf"
+	"github.com/mazzegi/gompdf"
 )
 
 func main() {
-	source := flag.String("source", "../../samples/doc1.xml", "")
-	target := flag.String("target", "doc1.pdf", "")
+	source := flag.String("source", "../../samples/doc3.xml", "")
+	target := flag.String("target", "doc3.pdf", "")
 	flag.Parse()
 
 	logf("run watcher (source:%s) (target:%s)", *source, *target)
