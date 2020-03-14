@@ -30,7 +30,7 @@ chapter-font{
 
 paragraph-font{
     font-family: Arial;
-    font-point-size: 10;
+    font-point-size: 14;
     font-style: normal;        
 }
 
@@ -154,20 +154,20 @@ percent-bar {
 <Lf lines="1"/>
 
 {{range .Vehicles}}
+<Text class="paragraph-font">__No. {{.Number}} ({{.ID}})__</Text>
 <Table>
-    <Tr >        
-        <Td class="paragraph-font" style="column-span: 1; border: 1,1,1,1;">__No. {{.Number}} ({{.ID}})__</Td>        
-    </Tr>
     <Tr class="general-table-label">
-        <Td style="column-span: 2">__ID__</Td>
-        <Td style="column-span: 2">__Type__</Td>
+        <Td>__ID__</Td>
+        <Td>__Type__</Td>
         <Td>__Operator__</Td>        
     </Tr>
     <Tr class="vehicle-table-value">
-        <Td style="column-span: 2">{{.ID}}</Td>
-        <Td style="column-span: 2">{{.Type}}</Td>
+        <Td>{{.ID}}</Td>
+        <Td>{{.Type}}</Td>
         <Td>{{.Operator}}</Td>        
     </Tr>
+</Table>
+<Table>
     <Tr class="default-font-small" style="border: 1,1,1,1; padding: 1,1,1,1;">
         <Td style="column-width: 12;">__Axle__</Td>
         <Td>__Bearing Left / °C__</Td>

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"time"
 
 	"github.com/mazzegi/gompdf"
 )
@@ -14,6 +15,7 @@ import (
 func main() {
 	train := BuildTrain()
 
+	start := time.Now()
 	src, err := ioutil.ReadFile("train.xml")
 	if err != nil {
 		panic(err)
@@ -49,6 +51,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("build pdf in (%s)\n", time.Since(start))
 }
 
 func funcs() template.FuncMap {

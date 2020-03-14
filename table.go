@@ -144,7 +144,44 @@ func (t Table) MaxColumnCount() int {
 	return m
 }
 
+func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
+	if t.MaxColumnCount() == 0 {
+		return 0
+	}
+	cellHeight := func(c *TableCell, cellWidth float64, cellStyle style.Styles) float64 {
+		textWidth := cellWidth - cellStyle.Box.Padding.Left - cellStyle.Box.Padding.Right
+		height := p.textHeight(c.Content, textWidth, cellStyle.Dimension.LineHeight, cellStyle.Font)
+		return height + cellStyle.Box.Padding.Top + cellStyle.Box.Padding.Bottom
+	}
+
+	widthTotal, _ := p.pdf.GetPageSize()
+	leftM, _, rightM, _ := p.pdf.GetMargins()
+	widthTotal -= (leftM + rightM)
+	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
+
+	totalHeight := float64(0)
+	for _, row := range t.Rows {
+		rowStyles := tableStyles
+		row.Apply(p.doc.styleClasses, &rowStyles)
+		//calc row height
+		rowHeight := float64(0)
+		for i, c := range row.Cells {
+			cellStyles := rowStyles
+			c.Apply(p.doc.styleClasses, &cellStyles)
+			ch := cellHeight(c, colWs[i], cellStyles)
+			if ch > rowHeight {
+				rowHeight = ch
+			}
+		}
+		totalHeight += rowHeight
+	}
+	return totalHeight
+}
+
 func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
+	tableHeight := p.tableHeight(t, tableStyles)
+	Logf("table-height: %.1f", tableHeight)
+
 	if t.MaxColumnCount() == 0 {
 		return
 	}
@@ -163,9 +200,13 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 
 	_, ph := p.pdf.GetPageSize()
 	ph -= (bottomM)
-
 	x0 := p.pdf.GetX()
 	y := p.pdf.GetY()
+	if y+tableHeight > ph {
+		p.pdf.AddPage()
+		y = p.pdf.GetY()
+	}
+
 	for _, row := range t.Rows {
 		rowStyles := tableStyles
 		row.Apply(p.doc.styleClasses, &rowStyles)
