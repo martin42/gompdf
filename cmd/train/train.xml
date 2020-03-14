@@ -17,7 +17,7 @@
         <Left>30</Left>
         <Top>20</Top>
         <Right>10</Right>
-        <Bottom>20</Bottom>
+        <Bottom>5</Bottom>
     </PageMargins>
 </Default>
 
@@ -30,7 +30,7 @@ chapter-font{
 
 paragraph-font{
     font-family: Arial;
-    font-point-size: 10;
+    font-point-size: 12;
     font-style: normal;        
 }
 
@@ -103,7 +103,6 @@ percent-bar {
 <Text>__General__</Text>
 <Lf lines="1"/>
 
-<SetX x="32"/>
 <Table>
     <Tr class="general-table-label">
         <Td>__Started__</Td>
@@ -135,7 +134,7 @@ percent-bar {
         <Td>__Speed__</Td>
         <Td>__Length__</Td>
         <Td>__Axles__</Td>
-        <Td>__Peso__</Td>
+        <Td>__Weight__</Td>
     </Tr>
     <Tr class="general-table-value">
         <Td>{{.Speed}}</Td>
@@ -147,7 +146,47 @@ percent-bar {
 
 <Lf lines="1"/>
 <Text class="chapter-font">__Alarms__</Text>
-<Text class="default-font-small">*No alarms where detected for this train-passage*</Text>
+<Text class="default-font-small">*2 alarms where found for this train-passage*</Text> 
+<Lf lines="1"/>
+{{range .Alarms}}
+<Table>
+    <Tr>
+        <Td style="column-width: 60; border: 1,1,1,0;"></Td>
+        <Td class="general-table-label" style="border: 1,1,1,0;">__State:__ {{.CaseState.Message}}</Td>
+    </Tr>
+    <Tr class="default-font-small">
+        <Td style="border: 1,0,1,0;"></Td>   
+        <Td style="border: 1,0,1,1;">by {{.CaseState.By}} - {{.CaseState.Date}}</Td>     
+    </Tr>
+
+    <Tr>
+        <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">({{.VehicleID}})</Td>
+        <Td class="general-table-label" style="border: 1,1,1,0;">__Assessment:__ {{.CaseAssessment.Message}}</Td>
+    </Tr>
+    <Tr class="default-font-small">
+        <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">{{.Entity}}</Td> 
+        <Td style="border: 1,0,1,1;">by {{.CaseAssessment.By}} - {{.CaseAssessment.Date}}</Td>       
+    </Tr>
+
+    <Tr>
+        <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">{{.Description}}</Td>      
+        <Td class="general-table-label" style="border: 1,1,1,0;">__Treatment:__ {{.CaseTreatment.Message}}</Td>
+    </Tr>
+    <Tr class="default-font-small">
+        <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">{{.Value}}</Td>  
+        <Td style="border: 1,0,1,1;">by {{.CaseTreatment.By}} - {{.CaseTreatment.Date}}</Td>         
+    </Tr>
+
+    <Tr>
+        <Td style="border: 1,0,1,0;"></Td>  
+        <Td class="general-table-label" style="border: 1,1,1,0;">__Remark:__ {{.CaseRemark.Message}}</Td>
+    </Tr>
+    <Tr class="default-font-small">
+        <Td style="border: 1,0,1,1;"></Td>  
+        <Td style="border: 1,0,1,1;">by {{.CaseRemark.By}} - {{.CaseRemark.Date}}</Td>               
+    </Tr>
+</Table>
+{{end}}
 
 <Lf lines="1"/>
 <Text class="chapter-font">__HBD at {{.System}}__</Text>
@@ -155,15 +194,15 @@ percent-bar {
 
 {{range .Vehicles}}
 <Table>
-    <Tr >        
-        <Td class="paragraph-font" style="column-span: 1; border: 1,1,1,1;">__No. {{.Number}} ({{.ID}})__</Td>        
+    <Tr style="border: 1,1,1,1;">        
+        <Td class="paragraph-font" style="column-span: 5; padding: 1,1,1,1;">__No. {{.Number}} ({{.ID}})__</Td>        
     </Tr>
-    <Tr class="general-table-label">
+    <Tr class="general-table-label" style="border: 1,1,1,0; padding: 1,1,1,1;">
         <Td style="column-span: 2">__ID__</Td>
         <Td style="column-span: 2">__Type__</Td>
         <Td>__Operator__</Td>        
     </Tr>
-    <Tr class="vehicle-table-value">
+    <Tr class="vehicle-table-value" style="border: 1,0,1,1; padding: 1,1,1,1;">
         <Td style="column-span: 2">{{.ID}}</Td>
         <Td style="column-span: 2">{{.Type}}</Td>
         <Td>{{.Operator}}</Td>        

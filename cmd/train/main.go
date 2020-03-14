@@ -77,6 +77,23 @@ func funcs() template.FuncMap {
 	return fm
 }
 
+type Stamp struct {
+	Message string
+	Date    string
+	By      string
+}
+
+type Alarm struct {
+	Entity         string
+	VehicleID      string
+	Description    string
+	Value          string
+	CaseState      Stamp
+	CaseAssessment Stamp
+	CaseTreatment  Stamp
+	CaseRemark     Stamp
+}
+
 //
 type Temp struct {
 	Value int
@@ -114,11 +131,12 @@ type Train struct {
 	Length    int
 	Axles     int
 	Vehicles  []Vehicle
+	Alarms    []Alarm
 }
 
 func BuildTrain() *Train {
 	t := Train{
-		System:    "Wuhan<",
+		System:    "Cheddar?Creek<",
 		Started:   "2020-03-22 14:11:12",
 		Finished:  "2020-03-22 14:17:43",
 		Number:    ">FXE123",
@@ -135,7 +153,7 @@ func BuildTrain() *Train {
 			Number:   i + 1,
 			ID:       fmt.Sprintf("XCB-22-%d", i+42),
 			Type:     "Locomotive",
-			Operator: "FX",
+			Operator: "ÜÄÖ",
 		}
 		for a := 0; a < 4; a++ {
 			v.Axles = append(v.Axles, Axle{
@@ -152,6 +170,56 @@ func BuildTrain() *Train {
 	t.Vehicles[0].Axles[3].BearingRight = bearingTemp(2)
 	t.Vehicles[1].Axles[0].Disk = wheelTemp(2)
 	t.Vehicles[1].Axles[2].Brake = wheelTemp(1)
+
+	t.Alarms = append(t.Alarms, Alarm{
+		Entity:      "Wheelset 4",
+		VehicleID:   "XCB-22-42",
+		Description: "Absolute Hot - Right Bearing",
+		Value:       "118 °C",
+		CaseState: Stamp{
+			Message: "Processed",
+			Date:    "2020-03-22 15:10:12",
+			By:      "Senior Ramos",
+		},
+		CaseAssessment: Stamp{
+			Message: "Defect",
+			Date:    "2020-03-22 15:08:54",
+			By:      "Senior Ramos",
+		},
+		CaseTreatment: Stamp{
+			Message: "Vehicle Removed",
+			Date:    "2020-03-22 15:09:17",
+			By:      "Senior Ramos",
+		},
+		CaseRemark: Stamp{
+			Message: "Knocking off now",
+			Date:    "2020-03-22 16:00:00",
+			By:      "Senior Ramos",
+		},
+	})
+
+	t.Alarms = append(t.Alarms, Alarm{
+		Entity:      "Wheelset 5",
+		VehicleID:   "XCB-22-43",
+		Description: "Absolute Hot - Disk Bearing",
+		Value:       "420°C °C",
+		CaseState: Stamp{
+			Message: "Acknowledged",
+			Date:    "2020-03-22 15:33:02",
+			By:      "Senior Ramos",
+		},
+		CaseAssessment: Stamp{
+			Message: "Too hot",
+			Date:    "2020-03-22 15:33:20",
+			By:      "Senior Ramos",
+		},
+		CaseRemark: Stamp{
+			Message: "Still investigating",
+			Date:    "2020-03-22 15:45:35",
+			By:      "Senior Ramos",
+		},
+	})
+
 	return &t
 }
 

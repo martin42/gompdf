@@ -180,16 +180,10 @@ func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
 
 func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	tableHeight := p.tableHeight(t, tableStyles)
-	Logf("table-height: %.1f", tableHeight)
+	//Logf("table-height: %.1f", tableHeight)
 
 	if t.MaxColumnCount() == 0 {
 		return
-	}
-
-	cellHeight := func(c *TableCell, cellWidth float64, cellStyle style.Styles) float64 {
-		textWidth := cellWidth - cellStyle.Box.Padding.Left - cellStyle.Box.Padding.Right
-		height := p.textHeight(c.Content, textWidth, cellStyle.Dimension.LineHeight, cellStyle.Font)
-		return height + cellStyle.Box.Padding.Top + cellStyle.Box.Padding.Bottom
 	}
 
 	//if not further specified, distribute witdths uniformly
@@ -197,6 +191,20 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	leftM, _, rightM, bottomM := p.pdf.GetMargins()
 	widthTotal -= (leftM + rightM)
 	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
+
+	cellHeight := func(c *TableCell, cellIdx int, cellStyle style.Styles) float64 {
+		cellWidth := colWs[cellIdx]
+		if cellStyle.Table.ColumnSpan > 1 {
+			for cs := 1; cs < cellStyle.Table.ColumnSpan; cs++ {
+				if cellIdx+cs < len(colWs) {
+					cellWidth += colWs[cellIdx+cs]
+				}
+			}
+		}
+		textWidth := cellWidth - cellStyle.Box.Padding.Left - cellStyle.Box.Padding.Right
+		height := p.textHeight(c.Content, textWidth, cellStyle.Dimension.LineHeight, cellStyle.Font)
+		return height + cellStyle.Box.Padding.Top + cellStyle.Box.Padding.Bottom
+	}
 
 	_, ph := p.pdf.GetPageSize()
 	ph -= (bottomM)
@@ -215,7 +223,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 		for i, c := range row.Cells {
 			cellStyles := rowStyles
 			c.Apply(p.doc.styleClasses, &cellStyles)
-			ch := cellHeight(c, colWs[i], cellStyles)
+			ch := cellHeight(c, i, cellStyles)
 			if ch > rowHeight {
 				rowHeight = ch
 			}
