@@ -12,7 +12,7 @@
     <Format>a4</Format>
     <PageBreaks>auto</PageBreaks>
     <PageMargins>
-        <Left>30</Left>
+        <Left>20</Left>
         <Top>20</Top>
         <Right>15</Right>
         <Bottom>20</Bottom>
@@ -22,72 +22,127 @@
 <Style>
 default-font{
     font-family: Arial;
-    font-point-size: 12;
+    font-point-size: 10;
     font-style: normal;	
 }
 default-font-small{
     font-family: Arial;
-    font-point-size: 10;
+    font-point-size: 9;
     font-style: normal;	
 }
 </Style>
 
-<Header>    
-    <SetY y="5"/>
-    <Text>
-        {cp} / {np}
-    </Text>
-    <SetY y="20"/>
+<Header>        
 </Header> 
 
 <Footer>   
-    <SetY y="-10"/> 
+    <SetY y="-20"/> 
     <Font  class="default-font-small"/>
-    <Text>Ölmühle Gilles GmbH • Ust-IdNr.DE 320017584 • Amtsgericht Montabaur • DE-ÖKO-006</Text>
+    <Text style="h-align: center;">
+    Rechnungsnummer: 2099-11145 / Seite {cp} von {np}\
+    Westerwald Bank eG • IBAN DE19 5739 1800 0014 9546 00 • BIC GENODE51WW1\
+    Ölmühle Gilles GmbH • Ust-IdNr.DE 320017584 • Amtsgericht Montabaur • DE-ÖKO-006
+    </Text>
 </Footer>
 
 <Body>
 <Font class="default-font"/>
 
+<SetXY x="20" y="10"/>
+<Image style="h-align: left;">banner-tiny.png</Image>
+<SetXY x="180" y="10"/>
+<Image style="h-align: right;">logo-tiny.png</Image>
 
-<Image>bug.png</Image>
-<Lf lines="3.0"/>
-
-<Box style="line-height: 1.5; width: 60; h-align: center; padding: 3,3,3,3; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
-Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
-Claustro etiam numbat decesse.
+<Font  class="default-font-small"/>
+<SetXY x="120" y="45"/>
+<Box style="width: 75; h-align: right; line-height: 1.5;">
+Ölmühle Gilles GmbH\
+Gartenstraße 2\
+D - 56317 Urbach\
+Tel: +49 (0) 2684 - 4290\
+Fax: +49 (0) 2684 - 958787\
+info@oelmuehle-gilles.de\
+www.oelmuehle-gilles.de
 </Box>
 
-<Table style="border: 1,1,1,1; padding: 2,2,2,2;">
-    <Tr>
-        <Td>__1__: c4 e4; kf3 c6</Td>
-        <Td style="h-align: center;">A momentary lapse of causes</Td>
+<Font  class="default-font"/>
+<SetXY x="20" y="62"/>
+<Box style="width: 75; h-align: left; line-height: 1.5;">
+Monika Mustermann\
+Teststraße 77\
+12345 Mahlstadt
+</Box>
+
+<SetXY x="20" y="100"/>
+<Box>Rechnungsnummer: 2099-11145</Box>
+<SetXY x="80" y="100"/>
+<Box style="width: 115; h-align: right;">Urbach, 29.02.2099</Box>
+
+<SetXY x="20" y="120"/>
+<Box>
+Einen schönen guten Tag,\
+vielen Dank für Ihre Bestellung.\
+Für die von Ihnen am 11.02.2020 bestellten Produkte stellen wir Ihnen heute folgende Rechnung:
+</Box>
+
+<Lf lines="1.0"/>
+<Table style="border: 1,1,1,1; padding: 0,0,0,0;">
+    <Tr>        
+        <Td style="column-width:12; border: 1,1,0,0; h-align: left;">__Pos.__</Td>
+        <Td style="column-width:20; border: 0,1,0,0; h-align: left;">__Menge__</Td>
+        <Td style="column-width:77; border: 0,1,0,0; h-align: left;">__Artikel__</Td>
+        <Td style="column-width:15; border: 0,1,0,0; h-align: right;">__MwSt__</Td>
+        <Td style="column-width:27; border: 0,1,0,0; h-align: right;">__Einzelpreis__</Td>
+        <Td style="column-width:24; border: 0,1,1,0; h-align: right;">__Summe__</Td>
     </Tr>
     <Tr>
-        <Td>__2__: c4 e4; kf3 c6</Td>
-        <Td style="h-align: center;">A momentary lapse of causes</Td>
+        <Td style="border: 1,1,0,0; h-align: left;">1</Td>
+        <Td style="border: 0,1,0,0; h-align: left;">3</Td>
+        <Td style="border: 0,1,0,0; h-align: left;">Bio-Schwarzkümmelöl 250 ml</Td>
+        <Td style="border: 0,1,0,0; h-align: right;">7%</Td>
+        <Td style="border: 0,1,0,0; h-align: right;">30,25 €</Td>
+        <Td style="border: 0,1,1,0; h-align: right;">101,75 €</Td>
     </Tr>
     <Tr>
-        <Td>__3__: c4 e4; kf3 c6</Td>
-        <Td style="h-align: center;">A momentary lapse of causes</Td>
-    </Tr>
-    <Tr>
-        <Td>__4__: c4 e4; kf3 c6</Td>
-        <Td style="h-align: center;">A momentary lapse of causes</Td>
-    </Tr>
-    <Tr>
-        <Td>__5__: c4 e4; kf3 c6</Td>
-        <Td style="h-align: center;">A momentary lapse of causes</Td>
-    </Tr>
-    <Tr>
-        <Td>__6__: c4 e4; kf3 c6</Td>
-        <Td style="h-align: center;">A momentary lapse of causes</Td>
-    </Tr>
-    <Tr>
-        <Td>__7__: c4 e4; kf3 c6</Td>
-        <Td style="h-align: right;">lapse of reasons</Td>
+        <Td style="border: 1,1,0,1; h-align: left;">2</Td>
+        <Td style="border: 0,1,0,1; h-align: left;">3</Td>
+        <Td style="border: 0,1,0,1; h-align: left;">Bio-Schwarzkümmelöl 250 ml</Td>
+        <Td style="border: 0,1,0,1; h-align: right;">7%</Td>
+        <Td style="border: 0,1,0,1; h-align: right;">30,25 €</Td>
+        <Td style="border: 0,1,1,1; h-align: right;">101,75 €</Td>
     </Tr>
 </Table>
+
+<Lf lines="1.0"/>
+<SetX x="123"/>
+<Table style="border: 1,1,1,1; padding: 0,0,0,0;">
+    <Tr>        
+        <Td style="column-width:50; border: 0,1,0,0;">__Warenwert Netto__</Td>
+        <Td style="column-width:22; h-align: right; border: 0,1,0,0;">215,51 €</Td>        
+    </Tr>
+    <Tr>        
+        <Td style="border: 0,0,0,0; h-align: left">Enthaltene MwSt zu 7%</Td>
+        <Td style="border: 0,0,0,0; h-align: right">15,09 €</Td>        
+    </Tr>
+    <Tr>        
+        <Td style="border: 0,0,0,0; h-align: left">Enthaltene MwSt zu 19%</Td>
+        <Td style="border: 0,0,0,0; h-align: right">22,00 €</Td>        
+    </Tr>
+    <Tr>        
+        <Td style="border: 0,1,0,0; h-align: left">__Rechnungssumme__</Td>
+        <Td style="border: 0,1,0,0; h-align: right">230,60 €</Td>        
+    </Tr>
+</Table>
+
+<Lf lines="2.0"/>
+<Box>
+Der Rechnungsbetrag ist ohne Abzüge nach Eingang der Rechnung sofort fällig. Bitte geben sie unbedingt die
+Rechnungsnummer an und überweisen Sie den Betrag bitte auf das unten stehende Konto.\
+\
+Mit den besten Wünschen aus dem Westerwald\
+\
+Ihre Ölmühle Gilles
+</Box>
 
 </Body> 
 
