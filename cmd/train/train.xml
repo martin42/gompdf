@@ -85,10 +85,10 @@ percent-bar {
 <Font class="default-font"/>
 <SetY y="5"/>
 <Table>
-    <Tr style="border: 0,0,0,1;">
-        <Td style="width: 40; h-align: left;">voestalpine SIGNALING</Td>
-        <Td style="h-align: center;">{{.System}} - {{.Started}}</Td>
-        <Td style="width: 40; h-align: right; padding: 0,0,1,0;">{cp} / {np} </Td>
+    <Tr style="border: 0,0,0,0;">
+        <Td style="column-width: 50; h-align: left;">voestalpine SIGNALING</Td>
+        <Td style="h-align: center; column-width: 80;">{{.System}} - {{.Started}}</Td>
+        <Td style="h-align: right; padding: 0,0,1,0;">{cp} / {np} </Td>
     </Tr>  
 </Table>
 <SetY y="20"/>
