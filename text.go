@@ -98,7 +98,6 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 }
 
 func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font, cr style.RGB) {
-	//Logf("write: font-weight: %s, lineHeight: %.1f", fnt.Weight, lineHeight)
 	p.applyFont(fnt)
 	p.pdf.SetTextColor(int(cr.R), int(cr.G), int(cr.B))
 	text = p.normalizedText(text)

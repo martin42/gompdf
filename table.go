@@ -161,7 +161,6 @@ func (p *Processor) processTableSpans(t *Table) error {
 			var cellStyles style.Styles
 			cell.Apply(style.Classes{}, &cellStyles)
 			if cellStyles.Table.RowSpan > 1 {
-
 				//insert spanned cell in following rows
 				for n := 0; n <= cellStyles.RowSpan-2; n++ {
 					spannedRowIdx := ir + 1 + n
@@ -175,7 +174,6 @@ func (p *Processor) processTableSpans(t *Table) error {
 							newCells = append(newCells, c)
 						}
 						newCell := &TableCell{
-							Content:   "span",
 							spannedBy: cell,
 						}
 						cell.spans = append(cell.spans, newCell)
@@ -194,9 +192,6 @@ func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
 	if t.MaxColumnCount() == 0 {
 		return 0
 	}
-
-	p.processTableSpans(t)
-
 	cellHeight := func(c *TableCell, cellWidth float64, cellStyle style.Styles) float64 {
 		textWidth := cellWidth - cellStyle.Box.Padding.Left - cellStyle.Box.Padding.Right
 		height := p.textHeight(c.Content, textWidth, cellStyle.Dimension.LineHeight, cellStyle.Font)
@@ -228,11 +223,11 @@ func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
 }
 
 func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
-	tableHeight := p.tableHeight(t, tableStyles)
-
 	if t.MaxColumnCount() == 0 {
 		return
 	}
+	p.processTableSpans(t)
+	tableHeight := p.tableHeight(t, tableStyles)
 
 	//if not further specified, distribute witdths uniformly
 	widthTotal, _ := p.pdf.GetPageSize()

@@ -138,7 +138,6 @@ func (p *Processor) effectiveWidth(width float64) float64 {
 }
 
 func (p *Processor) applyFont(fnt style.Font) {
-	//Logf("set-font: %s, %s, %.1f", fnt.Family, fpdfFontStyle(fnt), fnt.PointSize)
 	p.pdf.SetFont(string(fnt.Family), fpdfFontStyle(fnt), float64(fnt.PointSize))
 }
 
