@@ -345,11 +345,22 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 func (p *Processor) renderCell(x0, y0, x1, y1 float64, c *TableCell, cellStyles style.Styles) {
 	p.drawBox(x0, y0, x1, y1, cellStyles)
 
-	//Reset, to start writing at top left
-	p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+	textWidth := (x1 - x0) - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right - 2 //wihout 2 it doesn't fit
+	textHeight := p.textHeight(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Font)
+	textMargin := y1 - y0 - textHeight - cellStyles.Box.Padding.Top - cellStyles.Box.Padding.Bottom
+	if textMargin < 0 {
+		textMargin = 0
+	}
+
+	if cellStyles.Align.VAlign == style.VAlignMiddle {
+		p.pdf.SetY(y0 + cellStyles.Box.Padding.Top + textMargin/2)
+	} else if cellStyles.Align.VAlign == style.VAlignBottom {
+		p.pdf.SetY(y0 + cellStyles.Box.Padding.Top + textMargin)
+	} else {
+		p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+	}
 	p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
 
-	textWidth := (x1 - x0) - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right - 2 //wihout 2 it doesn't fit
 	p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
 
 	for _, inst := range c.Instructions {
