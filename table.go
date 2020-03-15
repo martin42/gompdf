@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 
 	"github.com/mazzegi/gompdf/style"
+	"github.com/pkg/errors"
 )
 
 func (tab *Table) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
@@ -78,6 +79,12 @@ func (cell *TableCell) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 	}
 }
 
+type tableFlag int
+
+const (
+	rowSpanned tableFlag = 1
+)
+
 type Table struct {
 	Styled
 	XMLName xml.Name    `xml:"Table"`
@@ -86,15 +93,19 @@ type Table struct {
 
 type TableRow struct {
 	Styled
-	XMLName xml.Name     `xml:"Tr"`
-	Cells   []*TableCell `xml:"Td"`
+	XMLName   xml.Name     `xml:"Tr"`
+	Cells     []*TableCell `xml:"Td"`
+	tableFlag tableFlag
 }
 
 type TableCell struct {
 	Styled
-	XMLName      xml.Name `xml:"Td"`
-	Content      string   `xml:",chardata"`
-	Instructions []Instruction
+	XMLName        xml.Name `xml:"Td"`
+	Content        string   `xml:",chardata"`
+	Instructions   []Instruction
+	spannedBy      *TableCell
+	spans          []*TableCell
+	x0, y0, x1, y1 float64
 }
 
 func (p *Processor) ColumnWidths(t *Table, pageWidth float64, tableStyles style.Styles) []float64 {
@@ -144,10 +155,49 @@ func (t Table) MaxColumnCount() int {
 	return m
 }
 
+func (p *Processor) processTableSpans(t *Table) error {
+	for ir, row := range t.Rows {
+		for ic, cell := range row.Cells {
+			var cellStyles style.Styles
+			cell.Apply(style.Classes{}, &cellStyles)
+			if cellStyles.Table.RowSpan > 1 {
+				Logf("row-span %d at (%d, %d)", cellStyles.Table.RowSpan, ir+1, ic+1)
+
+				//insert spanned cell in following rows
+				for n := 0; n <= cellStyles.RowSpan-2; n++ {
+					spannedRowIdx := ir + 1 + n
+					if spannedRowIdx >= len(t.Rows) {
+						return errors.Errorf("row span exceeds table")
+					}
+					spannedRow := t.Rows[spannedRowIdx]
+					if ic <= len(spannedRow.Cells) {
+						newCells := []*TableCell{}
+						for _, c := range spannedRow.Cells[:ic] {
+							newCells = append(newCells, c)
+						}
+						newCell := &TableCell{
+							Content:   "span",
+							spannedBy: cell,
+						}
+						cell.spans = append(cell.spans, newCell)
+						newCells = append(newCells, newCell)
+						newCells = append(newCells, spannedRow.Cells[ic:]...)
+						spannedRow.Cells = newCells
+					}
+				}
+			}
+		}
+	}
+	return nil
+}
+
 func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
 	if t.MaxColumnCount() == 0 {
 		return 0
 	}
+
+	p.processTableSpans(t)
+
 	cellHeight := func(c *TableCell, cellWidth float64, cellStyle style.Styles) float64 {
 		textWidth := cellWidth - cellStyle.Box.Padding.Left - cellStyle.Box.Padding.Right
 		height := p.textHeight(c.Content, textWidth, cellStyle.Dimension.LineHeight, cellStyle.Font)
@@ -215,6 +265,8 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 		y = p.pdf.GetY()
 	}
 
+	afterRender := []func(){}
+
 	for _, row := range t.Rows {
 		rowStyles := tableStyles
 		row.Apply(p.doc.styleClasses, &rowStyles)
@@ -256,33 +308,60 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 			colOffset += cellStyles.Table.ColumnSpan
 
 			y1 := y + rowHeight
-			p.drawBox(x0, y0, x1, y1, cellStyles)
-
-			//Reset, to start writing at top left
-			p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
-			p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
-
-			textWidth := ws - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right - 2 //wihout 2 it doesn't fit
-			p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
-
-			for _, inst := range c.Instructions {
-				switch inst := inst.(type) {
-				case *Box:
-					p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
-					p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
-					p.renderTextBox(inst.Text, p.appliedStyles(inst))
-				case *Image:
-					p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
-					p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
-					p.renderImage(inst, p.appliedStyles(inst))
-				}
+			c.x0, c.y0, c.x1, c.y1 = x0, y0, x1, y1
+			x += ws
+			if c.spannedBy != nil {
+				continue
 			}
-
-			x += ws //colWs[i]
+			if len(c.spans) > 0 {
+				arStyles := cellStyles
+				arCell := c
+				afterRender = append(afterRender, func() {
+					//collect bounds
+					y1 := arCell.y1
+					for _, sc := range arCell.spans {
+						if sc.y1 > y1 {
+							y1 = sc.y1
+						}
+					}
+					p.renderCell(arCell.x0, arCell.y0, arCell.x1, y1, arCell, arStyles)
+				})
+				continue
+			}
+			p.renderCell(x0, y0, x1, y1, c, cellStyles)
 		}
 		y += rowHeight
 		p.pdf.Ln(-1)
 	}
+
+	for _, ar := range afterRender {
+		ar()
+	}
+
 	p.pdf.SetXY(x0, y)
 	p.pdf.Ln(-1)
+}
+
+func (p *Processor) renderCell(x0, y0, x1, y1 float64, c *TableCell, cellStyles style.Styles) {
+	p.drawBox(x0, y0, x1, y1, cellStyles)
+
+	//Reset, to start writing at top left
+	p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+	p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
+
+	textWidth := (x1 - x0) - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right - 2 //wihout 2 it doesn't fit
+	p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
+
+	for _, inst := range c.Instructions {
+		switch inst := inst.(type) {
+		case *Box:
+			p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+			p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
+			p.renderTextBox(inst.Text, p.appliedStyles(inst))
+		case *Image:
+			p.pdf.SetY(y0 + cellStyles.Box.Padding.Top)
+			p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
+			p.renderImage(inst, p.appliedStyles(inst))
+		}
+	}
 }

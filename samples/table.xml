@@ -1,0 +1,90 @@
+<Document>
+
+<Meta>
+    <Author>mazzegi</Author>
+    <Creator>MPDF</Creator>
+    <Subject>Sample 1</Subject>
+</Meta>
+
+<Default>
+    <Orientation>portrait</Orientation>
+    <Unit>mm</Unit>
+    <Format>a4</Format>
+    <PageBreaks>auto</PageBreaks>
+    <PageMargins>
+        <Left>30</Left>
+        <Top>20</Top>
+        <Right>10</Right>
+        <Bottom>20</Bottom>
+    </PageMargins>
+</Default>
+
+<Style>
+default-font{
+    font-family: Arial;
+    font-point-size: 12;
+    font-style: normal;	
+}
+
+default-font-times{
+    font-family: Times;
+    font-point-size: 12;
+    font-style: normal;	
+}
+
+default-font-small{
+    font-family: Arial;
+    font-point-size: 6;
+    font-style: normal;	
+}
+
+</Style>
+
+<Header>    
+</Header> 
+
+<Footer>    
+</Footer>
+
+<Body>
+
+<Font class="default-font"/>
+
+<Table style="border: 1,1,1,1;">
+    <Tr>
+        <Td >1,1</Td>
+        <Td >1,2</Td>
+        <Td >1,3</Td>
+    </Tr>
+    <Tr>
+        <Td>2,1</Td>
+        <Td style="column-span: 2;">2,2</Td>
+        <!-- <Td>2,3</Td> -->
+    </Tr>
+    <Tr>
+        <Td>3,1</Td>
+        <Td>3,2</Td>
+        <Td>3,3</Td>
+    </Tr>
+    <Tr>
+        <Td>4,1</Td>
+        <Td style="row-span: 2; h-align: center; v-align: middle;">4,2</Td>
+        <Td>4,3</Td>
+    </Tr>
+    <Tr>
+        <Td>5,1</Td>
+        <Td>5,2</Td>
+        <Td>5,3</Td>
+    </Tr>
+    <Tr>
+        <Td>6,1</Td>
+        <Td>6,2</Td>
+        <Td>6,3</Td>
+    </Tr>
+</Table>
+
+
+</Body> 
+
+</Document>
+
