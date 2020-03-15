@@ -126,48 +126,48 @@ func (i *NoStyles) ApplyWithSelector(sel string, cs style.Classes, styles *style
 
 type Font struct {
 	Styled
-	XMLName xml.Name `xml:"Font"`
+	XMLName xml.Name `xml:"font"`
 }
 
 type LineFeed struct {
 	NoStyles
-	XMLName xml.Name `xml:"Lf"`
+	XMLName xml.Name `xml:"lf"`
 	Lines   float64  `xml:"lines,attr"`
 }
 
 type SetX struct {
 	NoStyles
-	XMLName xml.Name `xml:"SetX"`
+	XMLName xml.Name `xml:"set-x"`
 	X       float64  `xml:"x,attr"`
 }
 
 type SetY struct {
 	NoStyles
-	XMLName xml.Name `xml:"SetY"`
+	XMLName xml.Name `xml:"set-y"`
 	Y       float64  `xml:"y,attr"`
 }
 
 type SetXY struct {
 	NoStyles
-	XMLName xml.Name `xml:"SetXY"`
+	XMLName xml.Name `xml:"set-xy"`
 	X       float64  `xml:"x,attr"`
 	Y       float64  `xml:"y,attr"`
 }
 
 type Box struct {
 	Styled
-	XMLName xml.Name `xml:"Box"`
+	XMLName xml.Name `xml:"box"`
 	Text    string   `xml:",chardata"`
 }
 
 type Text struct {
 	Styled
-	XMLName xml.Name `xml:"Text"`
+	XMLName xml.Name `xml:"text"`
 	Text    string   `xml:",chardata"`
 }
 
 type Image struct {
 	Styled
-	XMLName xml.Name `xml:"Image"`
+	XMLName xml.Name `xml:"image"`
 	Source  string   `xml:",chardata"`
 }

@@ -102,38 +102,38 @@ const (
 )
 
 type PageMargins struct {
-	XMLName xml.Name `xml:"PageMargins"`
-	Left    float64  `xml:"Left"`
-	Top     float64  `xml:"Top"`
-	Right   float64  `xml:"Right"`
-	Bottom  float64  `xml:"Bottom"`
+	XMLName xml.Name `xml:"page-margins"`
+	Left    float64  `xml:"left"`
+	Top     float64  `xml:"top"`
+	Right   float64  `xml:"right"`
+	Bottom  float64  `xml:"bottom"`
 }
 
 type Document struct {
-	XMLName      xml.Name `xml:"Document"`
-	Meta         Meta     `xml:"Meta"`
-	Default      Default  `xml:"Default"`
-	Style        string   `xml:"Style"`
+	XMLName      xml.Name `xml:"document"`
+	Meta         Meta     `xml:"meta"`
+	Default      Default  `xml:"default"`
+	Style        string   `xml:"style"`
 	styleClasses style.Classes
-	Header       Instructions `xml:"Header"`
-	Footer       Instructions `xml:"Footer"`
-	Body         Instructions `xml:"Body"`
+	Header       Instructions `xml:"header"`
+	Footer       Instructions `xml:"footer"`
+	Body         Instructions `xml:"body"`
 }
 
 type Meta struct {
-	XMLName xml.Name `xml:"Meta"`
-	Author  string   `xml:"Author"`
-	Creator string   `xml:"Creator"`
-	Subject string   `xml:"Subject"`
+	XMLName xml.Name `xml:"meta"`
+	Author  string   `xml:"author"`
+	Creator string   `xml:"creator"`
+	Subject string   `xml:"subject"`
 }
 
 type Default struct {
-	XMLName     xml.Name      `xml:"Default"`
-	Orientation Orientation   `xml:"Orientation"`
-	Unit        Unit          `xml:"Unit"`
-	Format      Format        `xml:"Format"`
-	PageBreaks  PageBreakMode `xml:"PageBreaks"`
-	PageMargins PageMargins   `xml:"PageMargins"`
+	XMLName     xml.Name      `xml:"default"`
+	Orientation Orientation   `xml:"orientation"`
+	Unit        Unit          `xml:"unit"`
+	Format      Format        `xml:"format"`
+	PageBreaks  PageBreakMode `xml:"page-breaks"`
+	PageMargins PageMargins   `xml:"page-margins"`
 }
 
 func (is *Instructions) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {

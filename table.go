@@ -87,20 +87,20 @@ const (
 
 type Table struct {
 	Styled
-	XMLName xml.Name    `xml:"Table"`
-	Rows    []*TableRow `xml:"Tr"`
+	XMLName xml.Name    `xml:"table"`
+	Rows    []*TableRow `xml:"tr"`
 }
 
 type TableRow struct {
 	Styled
-	XMLName   xml.Name     `xml:"Tr"`
-	Cells     []*TableCell `xml:"Td"`
+	XMLName   xml.Name     `xml:"tr"`
+	Cells     []*TableCell `xml:"td"`
 	tableFlag tableFlag
 }
 
 type TableCell struct {
 	Styled
-	XMLName        xml.Name `xml:"Td"`
+	XMLName        xml.Name `xml:"td"`
 	Content        string   `xml:",chardata"`
 	Instructions   []Instruction
 	spannedBy      *TableCell
@@ -354,7 +354,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 func (p *Processor) renderCell(x0, y0, x1, y1 float64, c *TableCell, cellStyles style.Styles) {
 	p.drawBox(x0, y0, x1, y1, cellStyles)
 
-	textWidth := (x1 - x0) - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right - 2 //wihout 2 it doesn't fit
+	textWidth := (x1 - x0) - cellStyles.Box.Padding.Left - cellStyles.Box.Padding.Right - 3 //wihout 2 it doesn't fit
 	textHeight := p.textHeight(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Font)
 	textMargin := y1 - y0 - textHeight - cellStyles.Box.Padding.Top - cellStyles.Box.Padding.Bottom
 	if textMargin < 0 {

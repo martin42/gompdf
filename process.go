@@ -153,7 +153,7 @@ func (p *Processor) renderText(text *Text, sty style.Styles) {
 
 func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	width := p.effectiveWidth(sty.Dimension.Width)
-	textWidth := width - sty.Box.Padding.Left - sty.Box.Padding.Right - 2 //without -2 it writes over the border
+	textWidth := width - sty.Box.Padding.Left - sty.Box.Padding.Right - 3 //without -2 it writes over the border
 
 	var height float64
 	if sty.Dimension.Height < 0 {
