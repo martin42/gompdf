@@ -31,6 +31,7 @@ func init() {
 type Instruction interface {
 	DecodeAttrs(attrs []xml.Attr) error
 	Apply(cs style.Classes, styles *style.Styles)
+	ApplyWithSelector(sel string, cs style.Classes, styles *style.Styles)
 }
 
 type Instructions struct {
@@ -108,11 +109,20 @@ func (i *Styled) Apply(cs style.Classes, styles *style.Styles) {
 	}
 }
 
+func (i *Styled) ApplyWithSelector(sel string, cs style.Classes, styles *style.Styles) {
+	cs.ApplyWithSelector(sel, styles, i.Classes...)
+	for _, app := range i.Appliers {
+		app.Apply(styles)
+	}
+}
+
 type NoStyles struct{}
 
 func (i *NoStyles) DecodeAttrs(attrs []xml.Attr) error { return nil }
 
 func (i *NoStyles) Apply(cs style.Classes, styles *style.Styles) {}
+
+func (i *NoStyles) ApplyWithSelector(sel string, cs style.Classes, styles *style.Styles) {}
 
 type Font struct {
 	Styled

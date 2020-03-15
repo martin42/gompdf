@@ -161,7 +161,6 @@ func (p *Processor) processTableSpans(t *Table) error {
 			var cellStyles style.Styles
 			cell.Apply(style.Classes{}, &cellStyles)
 			if cellStyles.Table.RowSpan > 1 {
-				Logf("row-span %d at (%d, %d)", cellStyles.Table.RowSpan, ir+1, ic+1)
 
 				//insert spanned cell in following rows
 				for n := 0; n <= cellStyles.RowSpan-2; n++ {
@@ -230,7 +229,6 @@ func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
 
 func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	tableHeight := p.tableHeight(t, tableStyles)
-	//Logf("table-height: %.1f", tableHeight)
 
 	if t.MaxColumnCount() == 0 {
 		return
@@ -267,9 +265,15 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 
 	afterRender := []func(){}
 
-	for _, row := range t.Rows {
+	for ir, row := range t.Rows {
 		rowStyles := tableStyles
-		row.Apply(p.doc.styleClasses, &rowStyles)
+		if ir == 0 {
+			row.ApplyWithSelector("first", p.doc.styleClasses, &rowStyles)
+		} else if ir == len(t.Rows)-1 {
+			row.ApplyWithSelector("last", p.doc.styleClasses, &rowStyles)
+		} else {
+			row.Apply(p.doc.styleClasses, &rowStyles)
+		}
 		//calc row height
 		rowHeight := float64(0)
 		for i, c := range row.Cells {
@@ -292,11 +296,17 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 
 		x := x0
 		colOffset := 0
-		for _, c := range row.Cells {
+		for ic, c := range row.Cells {
 			cellStyles := rowStyles
-			c.Apply(p.doc.styleClasses, &cellStyles)
-			p.pdf.SetXY(x, y)
+			if ic == 0 {
+				c.ApplyWithSelector("first", p.doc.styleClasses, &cellStyles)
+			} else if ic == len(row.Cells) {
+				c.ApplyWithSelector("last", p.doc.styleClasses, &cellStyles)
+			} else {
+				c.Apply(p.doc.styleClasses, &cellStyles)
+			}
 
+			p.pdf.SetXY(x, y)
 			x0 := x
 			y0 := y
 			ws := colWs[colOffset]

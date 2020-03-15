@@ -40,12 +40,6 @@ default-font{
     font-style: normal;	
 }
 
-default-font-times{
-    font-family: Times;
-    font-point-size: 12;
-    font-style: normal;	
-}
-
 default-font-small{
     font-family: Arial;
     font-point-size: 8;
@@ -78,6 +72,16 @@ percent-bar {
     border: 1,1,1,1;
     offset-x: 8; 
     offset-y: 0.5; 
+}
+
+axle-table-cell-border{
+    border: 1,0,1,0;
+}
+axle-table-cell-border:first{
+    border: 1,1,1,0;
+}
+axle-table-cell-border:last{
+    border: 1,0,1,1;
 }
 </Style>
 
@@ -149,12 +153,9 @@ percent-bar {
 <Text class="default-font-small">*2 alarms where found for this train-passage*</Text> 
 <Lf lines="1"/>
 {{range .Alarms}}
-<Table class="default-font-small" style="border: 1,1,1,1;">    
-    {{$cr := tempAlarmColor .Severity}}
-    {{$crStyle := (printf "style=\"column-width: 5; background-color: %s; border: 1,1,1,1;\"" (tempAlarmColor .Severity) )}}
-    {{log $crStyle}}
+<Table class="default-font-small" style="border: 1,1,1,1;">        
     <Tr>
-        <Td style="row-span: 4; column-width: 3; background-color: {{$cr}};"/>
+        <Td style="row-span: 4; column-width: 3; background-color: {{tempAlarmColor .Severity}};"/>
         <Td style="row-span: 4; column-width: 60; v-align: middle; h-align: center;">
             ({{.VehicleID}})\
             {{.Entity}}\
@@ -213,15 +214,9 @@ percent-bar {
         <Td>__Disk / °C__</Td>
         <Td>__Brake / °C__</Td>
     </Tr>
-    {{$axles := .Axles}}
-    {{range $i,$e := .Axles}}
-    {{if eq (number $i) (len $axles)}}
-    <Tr class="default-font-small" style="border: 1,0,1,1; padding: 1,1,1,1">
-    {{else if eq $i 0}}
-    <Tr class="default-font-small" style="border: 1,1,1,0; padding: 1,1,1,1">
-    {{else}}
-    <Tr class="default-font-small" style="border: 1,0,1,0; padding: 1,1,1,1;">
-    {{end}}
+    
+    {{range $i,$e := .Axles}}        
+    <Tr class="default-font-small axle-table-cell-border" style="padding: 1,1,1,1;">
         <Td>{{.Number}}</Td>
         <Td>
             {{$width := scaleTemp .BearingLeft 25}}
