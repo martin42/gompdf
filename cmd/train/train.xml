@@ -149,39 +149,50 @@ percent-bar {
 <Text class="default-font-small">*2 alarms where found for this train-passage*</Text> 
 <Lf lines="1"/>
 {{range .Alarms}}
-<Table>
+<Table>    
+    {{$cr := tempAlarmColor .Severity}}
+    {{$crStyle := (printf "style=\"column-width: 5; background-color: %s; border: 1,1,1,1;\"" (tempAlarmColor .Severity) )}}
+    {{log $crStyle}}
     <Tr>
+        <Td {{attr $crStyle}}/>
         <Td style="column-width: 60; border: 1,1,1,0;"></Td>
         <Td class="general-table-label" style="border: 1,1,1,0;">__State:__ {{.CaseState.Message}}</Td>
     </Tr>
     <Tr class="default-font-small">
+        <Td {{attr $crStyle}}/>
         <Td style="border: 1,0,1,0;"></Td>   
         <Td style="border: 1,0,1,1;">by {{.CaseState.By}} - {{.CaseState.Date}}</Td>     
     </Tr>
 
     <Tr>
+        <Td {{attr $crStyle}}/>
         <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">({{.VehicleID}})</Td>
         <Td class="general-table-label" style="border: 1,1,1,0;">__Assessment:__ {{.CaseAssessment.Message}}</Td>
     </Tr>
     <Tr class="default-font-small">
+        <Td {{attr $crStyle}}/>
         <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">{{.Entity}}</Td> 
         <Td style="border: 1,0,1,1;">by {{.CaseAssessment.By}} - {{.CaseAssessment.Date}}</Td>       
     </Tr>
 
     <Tr>
+        <Td {{attr $crStyle}}/>
         <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">{{.Description}}</Td>      
         <Td class="general-table-label" style="border: 1,1,1,0;">__Treatment:__ {{.CaseTreatment.Message}}</Td>
     </Tr>
     <Tr class="default-font-small">
+        <Td {{attr $crStyle}}/>
         <Td class="default-font-small" style="h-align: center; border: 1,0,1,0;">{{.Value}}</Td>  
         <Td style="border: 1,0,1,1;">by {{.CaseTreatment.By}} - {{.CaseTreatment.Date}}</Td>         
     </Tr>
 
     <Tr>
+        <Td {{attr $crStyle}}/>
         <Td style="border: 1,0,1,0;"></Td>  
         <Td class="general-table-label" style="border: 1,1,1,0;">__Remark:__ {{.CaseRemark.Message}}</Td>
     </Tr>
     <Tr class="default-font-small">
+        <Td {{attr $crStyle}}/>
         <Td style="border: 1,0,1,1;"></Td>  
         <Td style="border: 1,0,1,1;">by {{.CaseRemark.By}} - {{.CaseRemark.Date}}</Td>               
     </Tr>
@@ -228,25 +239,25 @@ percent-bar {
             {{$width := scaleTemp .BearingLeft 25}}
             <Box class="default-font-small" style="width: 5;">{{.BearingLeft.Value}}</Box>            
             <Box class="percent-bar" style="width: 25; background-color: #eeeeee;"></Box>            
-            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .BearingLeft}};"></Box>
+            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .BearingLeft.Alarm}};"></Box>
         </Td>
         <Td>                        
             {{$width := scaleTemp .BearingRight 25}}
             <Box class="default-font-small" style="width: 5;">{{.BearingRight.Value}}</Box>  
             <Box class="percent-bar" style="width: 25; background-color: #eeeeee;"></Box>            
-            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .BearingRight}};"></Box> 
+            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .BearingRight.Alarm}};"></Box> 
         </Td>
         <Td>                    
             {{$width := scaleTemp .Disk 25}}
             <Box class="default-font-small" style="width: 5;">{{.Disk.Value}}</Box>  
             <Box class="percent-bar" style="width: 25; background-color: #eeeeee;"></Box>            
-            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .Disk}};"></Box>        
+            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .Disk.Alarm}};"></Box>        
         </Td>
         <Td>            
             {{$width := scaleTemp .Brake 25}}
             <Box class="default-font-small" style="width: 5;">{{.Brake.Value}}</Box>  
             <Box class="percent-bar" style="width: 25; background-color: #eeeeee;"></Box>            
-            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .Brake}};"></Box>
+            <Box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .Brake.Alarm}};"></Box>
         </Td>
     </Tr>
     {{end}}

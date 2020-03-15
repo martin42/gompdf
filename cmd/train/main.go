@@ -35,6 +35,7 @@ func main() {
 	//no we've got the xml inside the buffer
 	doc, err := gompdf.Load(&buf)
 	if err != nil {
+		//fmt.Printf("\n%s\n", buf.String())
 		panic(err)
 	}
 	p, err := gompdf.NewProcessor(doc)
@@ -56,6 +57,16 @@ func main() {
 
 func funcs() template.FuncMap {
 	fm := template.FuncMap{
+		"attr": func(s string) template.HTMLAttr {
+			return template.HTMLAttr(s)
+		},
+		"safe": func(s string) template.HTML {
+			return template.HTML(s)
+		},
+		"log": func(s string) error {
+			fmt.Printf("template: %s\n", s)
+			return nil
+		},
 		"number": func(i int) int {
 			return i + 1
 		},
@@ -63,8 +74,8 @@ func funcs() template.FuncMap {
 			d := float64(tmp.Value) / float64(tmp.Max-tmp.Min)
 			return int(d * float64(maxwidth))
 		},
-		"tempAlarmColor": func(tmp Temp) string {
-			switch tmp.Alarm {
+		"tempAlarmColor": func(alm int) string {
+			switch alm {
 			case 1:
 				return "#eeee00"
 			case 2:
@@ -84,6 +95,7 @@ type Stamp struct {
 }
 
 type Alarm struct {
+	Severity       int
 	Entity         string
 	VehicleID      string
 	Description    string
@@ -172,6 +184,7 @@ func BuildTrain() *Train {
 	t.Vehicles[1].Axles[2].Brake = wheelTemp(1)
 
 	t.Alarms = append(t.Alarms, Alarm{
+		Severity:    2,
 		Entity:      "Wheelset 4",
 		VehicleID:   "XCB-22-42",
 		Description: "Absolute Hot - Right Bearing",
@@ -199,6 +212,7 @@ func BuildTrain() *Train {
 	})
 
 	t.Alarms = append(t.Alarms, Alarm{
+		Severity:    1,
 		Entity:      "Wheelset 5",
 		VehicleID:   "XCB-22-43",
 		Description: "Absolute Hot - Disk Bearing",
