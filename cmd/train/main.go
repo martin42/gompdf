@@ -216,7 +216,7 @@ func BuildTrain() *Train {
 		Entity:      "Wheelset 5",
 		VehicleID:   "XCB-22-43",
 		Description: "Absolute Hot - Disk Bearing",
-		Value:       "420°C °C",
+		Value:       "420°C",
 		CaseState: Stamp{
 			Message: "Acknowledged",
 			Date:    "2020-03-22 15:33:02",

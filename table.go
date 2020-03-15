@@ -273,6 +273,10 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 		//calc row height
 		rowHeight := float64(0)
 		for i, c := range row.Cells {
+			if len(c.spans) > 0 || c.spannedBy != nil {
+				//don't consider row-spanned cells for general rowheight, as their height might by bigger
+				continue
+			}
 			cellStyles := rowStyles
 			c.Apply(p.doc.styleClasses, &cellStyles)
 			ch := cellHeight(c, i, cellStyles)
