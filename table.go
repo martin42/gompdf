@@ -198,8 +198,9 @@ func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
 		return height + cellStyle.Box.Padding.Top + cellStyle.Box.Padding.Bottom
 	}
 
-	widthTotal, _ := p.pdf.GetPageSize()
-	leftM, _, rightM, _ := p.pdf.GetMargins()
+	//widthTotal, _ := p.pdf.GetPageSize()
+	widthTotal := p.pageSize.W
+	leftM, _, rightM, _ := p.pdf.Margins()
 	widthTotal -= (leftM + rightM)
 	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
 
@@ -230,8 +231,8 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	tableHeight := p.tableHeight(t, tableStyles)
 
 	//if not further specified, distribute witdths uniformly
-	widthTotal, _ := p.pdf.GetPageSize()
-	leftM, _, rightM, bottomM := p.pdf.GetMargins()
+	widthTotal := p.pageSize.W
+	leftM, _, rightM, bottomM := p.pdf.Margins()
 	widthTotal -= (leftM + rightM)
 	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
 
@@ -249,7 +250,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 		return height + cellStyle.Box.Padding.Top + cellStyle.Box.Padding.Bottom
 	}
 
-	_, ph := p.pdf.GetPageSize()
+	ph := p.pageSize.H
 	ph -= (bottomM)
 	x0 := p.pdf.GetX()
 	y := p.pdf.GetY()
@@ -301,7 +302,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 				c.Apply(p.doc.styleClasses, &cellStyles)
 			}
 
-			p.pdf.SetXY(x, y)
+			p.SetXY(x, y)
 			x0 := x
 			y0 := y
 			ws := colWs[colOffset]
@@ -340,15 +341,15 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 			p.renderCell(x0, y0, x1, y1, c, cellStyles)
 		}
 		y += rowHeight
-		p.pdf.Ln(-1)
+		p.ln(-1)
 	}
 
 	for _, ar := range afterRender {
 		ar()
 	}
 
-	p.pdf.SetXY(x0, y)
-	p.pdf.Ln(-1)
+	p.SetXY(x0, y)
+	p.ln(-1)
 }
 
 func (p *Processor) renderCell(x0, y0, x1, y1 float64, c *TableCell, cellStyles style.Styles) {

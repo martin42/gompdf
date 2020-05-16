@@ -21,19 +21,31 @@
 
     <style>
 default-font{
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: times;
+>>>>>>> it compiles
     font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-times{
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: times;
+>>>>>>> it compiles
     font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-small{
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: times;
+>>>>>>> it compiles
     font-point-size: 6;
     font-style: normal;	
 }
@@ -66,7 +78,11 @@ EMail: batman@dark.knight
         </text>
 
         <font class="default-font-times"/>
+<<<<<<< HEAD
         <set-y y="200"/>
+=======
+        <lf lines="3.0"/>
+>>>>>>> it compiles
         <box style="line-height: 1.5; width: 200; h-align: right; padding:0,0,0,0;">
 Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
@@ -121,4 +137,9 @@ Claustro etiam numbat decesse.
 
     </body>
 
+<<<<<<< HEAD
 </document>
+=======
+</document>
+
+>>>>>>> it compiles

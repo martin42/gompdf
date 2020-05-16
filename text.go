@@ -38,18 +38,23 @@ type textLine struct {
 }
 
 func (p *Processor) applyMarkdownFont(mdi markdown.Item, toFnt style.Font) {
+	mdFont := toFnt
 	fntStyles := fpdfFontStyle(toFnt)
 	if mdi.Italic {
 		fntStyles += "I"
+		mdFont.Style = style.FontStyleItalic
 	}
 	if mdi.Bold {
 		fntStyles += "B"
+		mdFont.Weight = style.FontWeightBold
 	}
 	family := string(toFnt.Family)
 	if mdi.Code {
 		family = "Courier"
+		mdFont.Family = family
 	}
-	p.pdf.SetFont(family, fntStyles, toFnt.PointSize)
+	//p.pdf.SetFont(family, fntStyles, toFnt.PointSize)
+	p.applyFont(mdFont)
 }
 
 func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.Font) []textLine {
@@ -68,8 +73,8 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 			continue
 		}
 		p.applyMarkdownFont(mdWord, fnt)
-		wordWidth := p.pdf.GetStringWidth(mdWord.Text)
-		wordWidthTrimmedRight := p.pdf.GetStringWidth(strings.TrimRight(mdWord.Text, " "))
+		wordWidth, _ := p.pdf.MeasureTextWidth(mdWord.Text)
+		wordWidthTrimmedRight, _ := p.pdf.MeasureTextWidth(strings.TrimRight(mdWord.Text, " "))
 		if currLine.textWidth+wordWidth > width {
 			lines = append(lines, currLine)
 			currLine = textLine{
@@ -79,7 +84,7 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 		}
 		if len(currLine.mdWords) == 0 {
 			mdWord.Text = strings.TrimLeft(mdWord.Text, " ")
-			wordWidth = p.pdf.GetStringWidth(mdWord.Text)
+			wordWidth, _ = p.pdf.MeasureTextWidth(mdWord.Text)
 		}
 		currLine.mdWords = append(currLine.mdWords, mdWord)
 		currLine.textWidthTrimmedRight = currLine.textWidth + wordWidthTrimmedRight
@@ -99,11 +104,12 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 
 func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font, cr style.RGB) {
 	p.applyFont(fnt)
-	p.pdf.SetTextColor(int(cr.R), int(cr.G), int(cr.B))
+	p.pdf.SetTextColor(cr.R, cr.G, cr.B)
 	text = p.normalizedText(text)
-	_, fontHeight := p.pdf.GetFontSize()
+	fontHeight := p.currFont.PointSize
 	height := fontHeight * lineHeight
 	xLeft := p.pdf.GetX()
+	p.ln(fontHeight)
 	mdWords := markdown.NewProcessor().Process(text).WordItems(p.transformText)
 	lines := p.textLines(mdWords, width, fnt)
 	for _, line := range lines {
@@ -121,18 +127,19 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 
 		for _, mdWord := range line.mdWords {
 			p.applyMarkdownFont(mdWord, fnt)
-			p.pdf.Write(height, mdWord.Text)
+			//p.pdf.Write(height, mdWord.Text)
+			p.pdf.Text(mdWord.Text)
 		}
-		p.pdf.Ln(height)
+		p.ln(height)
 	}
-	p.pdf.SetTextColor(int(p.currStyles.Color.Text.R), int(p.currStyles.Color.Text.G), int(p.currStyles.Color.Text.B))
+	p.pdf.SetTextColor(p.currStyles.Color.Text.R, p.currStyles.Color.Text.G, p.currStyles.Color.Text.B)
 	p.applyFont(p.currStyles.Font)
 }
 
 func (p *Processor) textHeight(text string, width float64, lineHeight float64, fnt style.Font) float64 {
 	p.applyFont(fnt)
 	text = p.normalizedText(text)
-	_, fontHeight := p.pdf.GetFontSize()
+	fontHeight := p.currFont.PointSize
 	height := fontHeight * lineHeight
 	mdWords := markdown.NewProcessor().Process(text).WordItems(p.transformText)
 	lines := p.textLines(mdWords, width, fnt)
