@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jung-kurt/gofpdf"
+	"github.com/jung-kurt/gofpdf/v2"
 	"github.com/mazzegi/gompdf/style"
 )
 
@@ -64,6 +64,7 @@ func (p *Processor) Process(w io.Writer) error {
 		fpdfFormat(p.doc.Default.Format),
 		p.fontDir,
 	)
+
 	p.pdf.AliasNbPages("{np}")
 	translateUnicode := p.pdf.UnicodeTranslatorFromDescriptor(p.codePage)
 	p.transformText = func(s string) string {
