@@ -21,32 +21,52 @@
 
     <style>
 default-font{
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: sans;
+>>>>>>> get table spans again working so far
     font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-times{
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: sans;
+>>>>>>> get table spans again working so far
     font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-small{
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: sans;
+>>>>>>> get table spans again working so far
     font-point-size: 8;
     font-style: normal;	
 }
 
 font-times-big-italic-bold{
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: sans;
+>>>>>>> get table spans again working so far
     font-point-size: 16;
     font-style: italic;	
     font-weight: bold;
 }
 
 percent-bar {
+<<<<<<< HEAD
     font-family: arial;
+=======
+    font-family: sans;
+>>>>>>> get table spans again working so far
     font-point-size: 8;    
     font-weight: bold;
     h-align: left;
@@ -202,4 +222,9 @@ always and never
 
     </body>
 
+<<<<<<< HEAD
 </document>
+=======
+</document>
+
+>>>>>>> get table spans again working so far

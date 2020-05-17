@@ -143,8 +143,9 @@ type SetX struct {
 
 type SetY struct {
 	NoStyles
-	XMLName xml.Name `xml:"set-y"`
-	Y       float64  `xml:"y,attr"`
+	XMLName    xml.Name `xml:"set-y"`
+	Y          float64  `xml:"y,attr"`
+	FromBottom bool     `xml:"from-bottom,attr"`
 }
 
 type SetXY struct {

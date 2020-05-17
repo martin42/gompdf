@@ -27,7 +27,7 @@ func main() {
 	}
 	exec := func() {
 		logf("parse and build ...")
-		err := gompdf.ParseAndBuild(*source, *target)
+		err := gompdf.ParseAndBuildFile(*source, *target)
 		if err != nil {
 			logf("ERROR: %v", err)
 			return

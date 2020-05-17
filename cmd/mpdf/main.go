@@ -9,16 +9,20 @@ import (
 )
 
 func main() {
-	source := flag.String("source", "../../samples/doc1.xml", "")
-	target := flag.String("target", "doc1.pdf", "")
+	source := flag.String("source", "../../samples/table.xml", "")
+	target := flag.String("target", "table.pdf", "")
 	flag.Parse()
+	build(*source, *target)
+	//build(*source, "doc_copy.pdf")
+}
 
-	fmt.Printf("compile (%s) to (%s) ...\n", *source, *target)
+func build(source, target string) {
+	fmt.Printf("compile (%s) to (%s) ...\n", source, target)
 	start := time.Now()
-	err := gompdf.ParseAndBuild(*source, *target)
+	err := gompdf.ParseAndBuildFile(source, target)
 	if err != nil {
-		fmt.Printf("compile (%s) to (%s) ...failed: %v\n", *source, *target, err)
+		fmt.Printf("compile (%s) to (%s) ...failed: %v\n", source, target, err)
 	} else {
-		fmt.Printf("compile (%s) to (%s) ... done in (%s)\n", *source, *target, time.Since(start))
+		fmt.Printf("compile (%s) to (%s) ... done in (%s)\n", source, target, time.Since(start))
 	}
 }

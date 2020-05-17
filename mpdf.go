@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"time"
 
@@ -13,14 +14,45 @@ import (
 	"github.com/pkg/errors"
 )
 
-func ParseAndBuild(source string, target string) error {
-	start := time.Now()
-	fmt.Printf("load (%s) ...\n", source)
-	doc, err := LoadFromFile(source)
+func ParseAndBuild(source io.Reader, target io.Writer) error {
+	doc, err := Load(source)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("loaded (%s) ... in (%s)\n", source, time.Since(start))
+	start := time.Now()
+	fmt.Printf("process first time...\n")
+	p, err := NewProcessor(doc)
+	if err != nil {
+		return err
+	}
+	err = p.Process(ioutil.Discard, 0)
+	if err != nil {
+		return err
+	}
+	numPages := p.currPage
+	fmt.Printf("processed first time... in (%s)\n", time.Since(start))
+
+	start = time.Now()
+	fmt.Printf("process second time...\n")
+	p, err = NewProcessor(doc)
+	if err != nil {
+		return err
+	}
+	err = p.Process(target, numPages)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("processed second time... in (%s)\n", time.Since(start))
+
+	return nil
+}
+
+func ParseAndBuildFile(source string, target string) error {
+	srcF, err := os.Open(source)
+	if err != nil {
+		return errors.Errorf("open (%s)", source)
+	}
+	defer srcF.Close()
 
 	outF, err := os.Create(target)
 	if err != nil {
@@ -28,18 +60,7 @@ func ParseAndBuild(source string, target string) error {
 	}
 	defer outF.Close()
 
-	start = time.Now()
-	fmt.Printf("process ...\n")
-	p, err := NewProcessor(doc)
-	if err != nil {
-		return err
-	}
-	err = p.Process(outF)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("processed ... in (%s)\n", time.Since(start))
-	return nil
+	return ParseAndBuild(srcF, outF)
 }
 
 func Load(r io.Reader) (*Document, error) {

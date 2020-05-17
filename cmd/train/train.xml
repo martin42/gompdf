@@ -1,0 +1,270 @@
+{{define "train"}}
+<document>
+    <meta>
+        <author>mazzegi</author>
+        <creator>MPDF</creator>
+        <subject>Train Export</subject>
+    </meta>
+    <default>
+        <orientation>portrait</orientation>
+        <unit>mm</unit>
+        <format>a4</format>
+        <page-breaks>auto</page-breaks>
+        <page-margins>
+            <left>30</left>
+            <top>20</top>
+            <right>10</right>
+            <bottom>5</bottom>
+        </page-margins>
+    </default>
+
+    <style>
+chapter-font{
+    font-family: sans;
+    font-point-size: 16;
+    font-style: normal;        
+}
+
+paragraph-font{
+    font-family: sans;
+    font-point-size: 12;
+    font-style: normal;        
+}
+
+default-font{
+    font-family: sans;
+    font-point-size: 10;
+    font-style: normal;	
+}
+
+exo-font{
+    font-family: wts11;
+    font-point-size: 14;
+    font-style: normal;	
+}
+
+default-font-small{
+    font-family: sans;
+    font-point-size: 8;
+    font-style: normal;	
+}
+
+general-table-label{
+    font-family: sans;
+    font-point-size: 8;
+    font-style: normal;
+}
+general-table-value{
+    font-family: sans;
+    font-point-size: 10;
+    font-style: normal;
+    padding: 0,0,0,2;
+}
+vehicle-table-value{
+    font-family: sans;
+    font-point-size: 10;
+    font-style: normal;        
+}
+percent-bar {
+    font-family: sans;
+    font-point-size: 6;        
+    h-align: left;
+    line-width: 0.2; 
+    color: #888888; 
+    background-color: #dddddd; 
+    border: 1,1,1,1;
+    offset-x: 20; 
+    offset-y: 1.5; 
+}
+
+axle-table-cell-border{
+    border: 1,0,1,0;
+}
+axle-table-cell-border:first{
+    border: 1,1,1,0;
+}
+axle-table-cell-border:last{
+    border: 1,0,1,1;
+}
+
+blue-box{
+    border: 1,1,1,1;
+    line-width: 0.2; 
+    color: #888888; 
+    background-color: #8888ff; 
+}
+    </style>
+
+    <header>
+        <font class="default-font"/>
+        <set-y y="5"/>
+        <table>
+            <tr style="border: 0,0,0,1; padding: 0,0,0,1">
+                <td style="h-align: left;">voestalpine SIGNALING</td>
+                <td style="h-align: center; column-width: 240;">{{.System}} - {{.Started}}</td>
+                <td style="h-align: right;">{cp} / {np} </td>
+            </tr>
+        </table>
+        <set-y y="20"/>
+    </header>
+
+    <footer>
+    </footer>
+
+    <body>
+
+        <font class="chapter-font"/>
+        <lf lines="1"/>
+        <text>__General__</text>
+        <lf lines="1"/>
+
+        <table>
+            <tr class="general-table-label">
+                <td>__Started__</td>
+                <td>__Finished__</td>
+                <td>__Number__</td>
+                <td>__Operator__</td>
+            </tr>
+            <tr class="general-table-value">
+                <td>{{.Started}}</td>
+                <td>{{.Finished}}</td>
+                <td>{{.Number}}</td>
+                <td>{{.Operator}}</td>
+            </tr>
+
+            <tr class="general-table-label">
+                <td>__System__</td>
+                <td>__Track__</td>
+                <td>__Direction__</td>
+                <td>__Ambient Temp.__</td>
+            </tr>
+            <tr class="general-table-value">
+                <td>{{.System}}</td>
+                <td>{{.Track}}</td>
+                <td>{{.Direction}}</td>
+                <td>{{.Ambient}} °C</td>
+            </tr>
+
+            <tr class="general-table-label">
+                <td>__Speed__</td>
+                <td>__Length__</td>
+                <td>__Axles__</td>
+                <td>__Weight__</td>
+            </tr>
+            <tr class="general-table-value">
+                <td>{{.Speed}}</td>
+                <td>{{.Length}}</td>
+                <td>{{.Axles}}</td>
+                <td>-</td>
+            </tr>
+        </table>
+
+        <lf lines="1"/>
+        <text class="chapter-font">__Alarms__</text>
+        <text class="default-font-small">*2 alarms where found for this train-passage*</text>
+        <text class="exo-font">a test of fonts: 中文，你好 </text>
+        <lf lines="1"/>
+        <text class="default-font-small">`embed some code here to see how monospace works`</text>
+        <lf lines="1"/>
+        <box class="default-font-small blue-box">embed some code here to see how monospace works</box>
+        <lf lines="1"/>
+
+{{range .Alarms}}
+        <table class="default-font-small" style="border: 1,1,1,1; padding: 5,0,0,0;">
+            <tr>
+                <td style="row-span: 4; column-width: 9; background-color: {{tempAlarmColor .Severity}};"/>
+                <td style="row-span: 4; column-width: 180; v-align: middle; h-align: center;">
+            __{{.VehicleID}}__\
+            {{.Entity}}\
+            {{.Description}}\
+            {{.Value}}
+                </td>
+                <td >
+            __State:__ {{.CaseState.Message}}\
+            by {{.CaseState.By}} - {{.CaseState.Date}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+            __Assessment:__ {{.CaseAssessment.Message}}\
+            by {{.CaseAssessment.By}} - {{.CaseAssessment.Date}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+            __Treatment:__ {{.CaseTreatment.Message}}\
+            by {{.CaseTreatment.By}} - {{.CaseTreatment.Date}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+            __Remark:__ {{.CaseRemark.Message}}\
+            by {{.CaseRemark.By}} - {{.CaseRemark.Date}}
+                </td>
+            </tr>
+        </table>
+{{end}}
+
+        <lf lines="1"/>
+        <text class="chapter-font">__HBD at {{.System}}__</text>
+        <lf lines="1"/>
+
+{{range .Vehicles}}
+        <table>
+            <tr style="border: 1,1,1,1;">
+                <td class="paragraph-font" style="column-span: 5; padding: 3,1,1,1;">__No. {{.Number}} ({{.ID}})__</td>
+            </tr>
+            <tr class="general-table-label" style="border: 1,1,1,0; padding: 3,1,1,1;">
+                <td style="column-span: 2">__ID__</td>
+                <td style="column-span: 2">__Type__</td>
+                <td>__Operator__</td>
+            </tr>
+            <tr class="vehicle-table-value" style="border: 1,0,1,1; padding: 3,1,1,1;">
+                <td style="column-span: 2">{{.ID}}</td>
+                <td style="column-span: 2">{{.Type}}</td>
+                <td>{{.Operator}}</td>
+            </tr>
+            <tr class="default-font-small" style="border: 1,1,1,1; padding: 3,1,1,1;">
+                <td style="column-width: 36;">__Axle__</td>
+                <td>__Bearing Left / °C__</td>
+                <td>__Bearing Right / °C__</td>
+                <td>__Disk / °C__</td>
+                <td>__Brake / °C__</td>
+            </tr>
+    
+    {{range $i,$e := .Axles}}        
+            <tr class="default-font-small axle-table-cell-border" style="padding: 3,1,1,3;">
+                <td>{{.Number}}</td>
+                <td>
+            {{$width := scaleTemp .BearingLeft 75}}
+                    <box class="default-font-small" style="width: 20;">{{.BearingLeft.Value}}</box>
+                    <box class="percent-bar" style="width: 75; background-color: #eeeeee;"></box>
+                    <box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .BearingLeft.Alarm}};"></box>
+                </td>
+                <td>                        
+            {{$width := scaleTemp .BearingRight 75}}
+                    <box class="default-font-small" style="width: 20;">{{.BearingRight.Value}}</box>
+                    <box class="percent-bar" style="width: 75; background-color: #eeeeee;"></box>
+                    <box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .BearingRight.Alarm}};"></box>
+                </td>
+                <td>                    
+            {{$width := scaleTemp .Disk 75}}
+                    <box class="default-font-small" style="width: 20;">{{.Disk.Value}}</box>
+                    <box class="percent-bar" style="width: 75; background-color: #eeeeee;"></box>
+                    <box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .Disk.Alarm}};"></box>
+                </td>
+                <td>            
+            {{$width := scaleTemp .Brake 75}}
+                    <box class="default-font-small" style="width: 20;">{{.Brake.Value}}</box>
+                    <box class="percent-bar" style="width: 75; background-color: #eeeeee;"></box>
+                    <box class="percent-bar" style="width: {{$width}}; background-color: {{tempAlarmColor .Brake.Alarm}};"></box>
+                </td>
+            </tr>
+    {{end}}
+        </table>
+        <lf lines="1"/>
+{{end}}
+
+    </body>
+</document>
+{{end}}

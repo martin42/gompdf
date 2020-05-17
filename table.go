@@ -1,6 +1,7 @@
 package gompdf
 
 import (
+	"encoding/json"
 	"encoding/xml"
 
 	"github.com/mazzegi/gompdf/style"
@@ -79,12 +80,6 @@ func (cell *TableCell) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 	}
 }
 
-type tableFlag int
-
-const (
-	rowSpanned tableFlag = 1
-)
-
 type Table struct {
 	Styled
 	XMLName xml.Name    `xml:"table"`
@@ -93,9 +88,8 @@ type Table struct {
 
 type TableRow struct {
 	Styled
-	XMLName   xml.Name     `xml:"tr"`
-	Cells     []*TableCell `xml:"td"`
-	tableFlag tableFlag
+	XMLName xml.Name     `xml:"tr"`
+	Cells   []*TableCell `xml:"td"`
 }
 
 type TableCell struct {
@@ -106,6 +100,44 @@ type TableCell struct {
 	spannedBy      *TableCell
 	spans          []*TableCell
 	x0, y0, x1, y1 float64
+}
+
+func (t *Table) Dump() {
+	b, _ := json.MarshalIndent(t, "", "  ")
+	Logf("table:\n%s\n", string(b))
+}
+
+func (t *Table) Clone() *Table {
+	ct := &Table{
+		Styled: t.Styled,
+	}
+	for _, r := range t.Rows {
+		ct.Rows = append(ct.Rows, r.Clone())
+	}
+	return ct
+}
+
+func (r *TableRow) Clone() *TableRow {
+	cr := &TableRow{
+		Styled: r.Styled,
+	}
+	//Logf("clone-row with %d cells", len(r.Cells))
+	for _, c := range r.Cells {
+		cr.Cells = append(cr.Cells, c.Clone())
+	}
+	return cr
+}
+
+func (c *TableCell) Clone() *TableCell {
+	cc := &TableCell{
+		Styled:       c.Styled,
+		Content:      c.Content,
+		Instructions: c.Instructions,
+	}
+	// for _, i := range c.Instructions {
+	// 	cc.Instructions = append(cc.Instructions, i)
+	// }
+	return cc
 }
 
 func (p *Processor) ColumnWidths(t *Table, pageWidth float64, tableStyles style.Styles) []float64 {
@@ -161,6 +193,7 @@ func (p *Processor) processTableSpans(t *Table) error {
 			var cellStyles style.Styles
 			cell.Apply(style.Classes{}, &cellStyles)
 			if cellStyles.Table.RowSpan > 1 {
+				//Logf("found row-span (%d) (%d) -> (%d)", ir, ic, cellStyles.Table.RowSpan)
 				//insert spanned cell in following rows
 				for n := 0; n <= cellStyles.RowSpan-2; n++ {
 					spannedRowIdx := ir + 1 + n
@@ -168,6 +201,7 @@ func (p *Processor) processTableSpans(t *Table) error {
 						return errors.Errorf("row span exceeds table")
 					}
 					spannedRow := t.Rows[spannedRowIdx]
+					//Logf("spanned row has %d cells", len(spannedRow.Cells))
 					if ic <= len(spannedRow.Cells) {
 						newCells := []*TableCell{}
 						for _, c := range spannedRow.Cells[:ic] {
@@ -180,6 +214,7 @@ func (p *Processor) processTableSpans(t *Table) error {
 						newCells = append(newCells, newCell)
 						newCells = append(newCells, spannedRow.Cells[ic:]...)
 						spannedRow.Cells = newCells
+						//Logf("new row (%d): has %d cells", spannedRowIdx, len(spannedRow.Cells))
 					}
 				}
 			}
@@ -227,6 +262,9 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	if t.MaxColumnCount() == 0 {
 		return
 	}
+	// in order to remove temporary span variables/values
+	//defer t.resetSpans()
+
 	p.processTableSpans(t)
 	tableHeight := p.tableHeight(t, tableStyles)
 
@@ -235,6 +273,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	leftM, _, rightM, bottomM := p.pdf.Margins()
 	widthTotal -= (leftM + rightM)
 	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
+	//Logf("col-widths: %v", colWs)
 
 	cellHeight := func(c *TableCell, cellIdx int, cellStyle style.Styles) float64 {
 		cellWidth := colWs[cellIdx]
@@ -255,7 +294,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 	x0 := p.pdf.GetX()
 	y := p.pdf.GetY()
 	if y+tableHeight > ph {
-		p.pdf.AddPage()
+		p.addPage()
 		y = p.pdf.GetY()
 	}
 
@@ -286,7 +325,7 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 		}
 
 		if y+rowHeight >= ph {
-			p.pdf.AddPage()
+			p.addPage()
 			y = p.pdf.GetY()
 		}
 

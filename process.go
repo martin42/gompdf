@@ -1,9 +1,10 @@
 package gompdf
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
-	"time"
+	"strings"
 
 	//"github.com/jung-kurt/gofpdf/v2"
 	"github.com/mazzegi/gompdf/style"
@@ -22,8 +23,10 @@ type Processor struct {
 
 	transformText func(string) string
 
-	currStyles style.Styles
-	currFont   style.Font
+	currStyles       style.Styles
+	currFont         style.Font
+	currPage         int
+	preventPageBreak bool
 }
 
 func WithFontDir(dir string) ProcessOption {
@@ -42,10 +45,12 @@ func WithCodePage(cp string) ProcessOption {
 
 func NewProcessor(doc *Document, options ...ProcessOption) (*Processor, error) {
 	p := &Processor{
-		doc:        doc,
-		fontDir:    "fonts",
-		codePage:   "",
-		currStyles: DefaultStyle,
+		doc:              doc,
+		fontDir:          "fonts",
+		codePage:         "",
+		currStyles:       DefaultStyle,
+		currPage:         0,
+		preventPageBreak: false,
 	}
 	for _, o := range options {
 		err := o(p)
@@ -113,60 +118,100 @@ func (p *Processor) initFonts() error {
 	return nil
 }
 
-func (p *Processor) Process(w io.Writer) error {
-	start := time.Now()
-	fmt.Printf("run instructions ...\n")
+//TODO: Units
+//TODO: Orientation
+//TODO: Header/Footer
+//TODO: Page Numbering
+//TODO: Auto Page break
+
+// func (p *Processor) Process(w io.Writer) error {
+// 	start := time.Now()
+// 	// p.pdf.AliasNbPages("{np}")
+// 	p.transformText = func(s string) string {
+// 		ts := strings.Replace(s, "{cp}", fmt.Sprintf("%d", p.currPage), -1)
+// 		return ts
+// 	}
+
+// 	fmt.Printf("run instructions ...\n")
+// 	p.pageSize = gofpdf.PageSizeA4
+// 	p.pdf = &gofpdf.GoPdf{}
+// 	p.pdf.Start(gofpdf.Config{
+// 		PageSize: *p.pageSize,
+// 	})
+// 	err := p.initFonts()
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	p.addPage()
+
+// 	p.applyDefaults()
+// 	p.applyFont(p.currStyles.Font)
+// 	p.processInstructions(p.doc.Body)
+
+// 	fmt.Printf("run instructions ... in (%s)\n", time.Since(start))
+// 	return p.pdf.Write(w)
+// }
+
+func (p *Processor) Process(w io.Writer, numPages int) error {
+
+	// p.pdf.AliasNbPages("{np}")
+	p.transformText = func(s string) string {
+		ts := strings.Replace(s, "{cp}", fmt.Sprintf("%d", p.currPage), -1)
+		ts = strings.Replace(ts, "{np}", fmt.Sprintf("%d", numPages), -1)
+		return ts
+	}
 	p.pageSize = gofpdf.PageSizeA4
-	p.pdf = &gofpdf.GoPdf{}
-	p.pdf.Start(gofpdf.Config{
-		PageSize: *p.pageSize,
-	})
-	p.pdf.AddPage()
-	err := p.initFonts()
+	err := p.render()
 	if err != nil {
 		return err
 	}
 
-	//TODO: Units
-	//TODO: Orientation
-	//TODO: Header/Footer
-	//TODO: Page Numbering
-	//TODO: Auto Page break
-
-	// gofpdf.New(
-	// 	fpdfOrientation(p.doc.Default.Orientation),
-	// 	fpdfUnit(p.doc.Default.Unit),
-	// 	fpdfFormat(p.doc.Default.Format),
-	// 	p.fontDir,
-	// )
-
-	// p.pdf.AliasNbPages("{np}")
-	// translateUnicode := p.pdf.UnicodeTranslatorFromDescriptor(p.codePage)
-	p.transformText = func(s string) string {
-		// ts := strings.Replace(s, "{cp}", fmt.Sprintf("%d", p.pdf.PageNo()), -1)
-		// return translateUnicode(ts)
-		return s
-	}
-
-	// p.pdf.SetHeaderFunc(func() {
-	// 	p.processInstructions(p.doc.Header)
-	// })
-	// p.pdf.SetFooterFunc(func() {
-	// 	p.processInstructions(p.doc.Footer)
-	// })
-	p.applyDefaults()
-	p.applyFont(p.currStyles.Font)
-
-	p.pdf.AddPage()
-	p.processInstructions(p.doc.Body)
-
-	// err := p.pdf.Error()
+	// numPages := p.currPage
+	// p.transformText = func(s string) string {
+	// 	ts := strings.Replace(s, "{cp}", fmt.Sprintf("%d", p.currPage), -1)
+	// 	ts = strings.Replace(ts, "{np}", fmt.Sprintf("%d", numPages), -1)
+	// 	return ts
+	// }
+	// p.currStyles = DefaultStyle
+	// p.currPage = 0
+	// p.preventPageBreak = false
+	// err = p.render()
 	// if err != nil {
 	// 	return err
 	// }
-	fmt.Printf("run instructions ... in (%s)\n", time.Since(start))
+
 	return p.pdf.Write(w)
-	//return p.pdf.Output(w)
+}
+
+func (p *Processor) render() error {
+	p.pdf = &gofpdf.GoPdf{}
+	p.pdf.Start(gofpdf.Config{
+		PageSize: *p.pageSize,
+	})
+	err := p.initFonts()
+	if err != nil {
+		return err
+	}
+	p.addPage()
+	p.applyDefaults()
+	p.applyFont(p.currStyles.Font)
+	p.processInstructions(p.doc.Body)
+	return nil
+}
+
+func (p *Processor) addPage() {
+	if p.preventPageBreak {
+		return
+	}
+	p.pdf.AddPage()
+	p.currPage++
+	p.preventPageBreak = true
+	p.processInstructions(p.doc.Header)
+	y := p.pdf.GetY()
+	p.processInstructions(p.doc.Footer)
+	p.pdf.SetY(y + p.currFont.PointSize)
+	p.preventPageBreak = false
 }
 
 func (p *Processor) applyDefaults() {
@@ -178,6 +223,11 @@ func (p *Processor) appliedStyles(i Instruction) style.Styles {
 	st := p.currStyles
 	i.Apply(p.doc.styleClasses, &st)
 	return st
+}
+
+func dumpStyles(st style.Styles) {
+	b, _ := json.MarshalIndent(st, "", "  ")
+	Logf("styles:\n%s\n", string(b))
 }
 
 func (p *Processor) processInstructions(is Instructions) {
@@ -192,7 +242,11 @@ func (p *Processor) processInstructions(is Instructions) {
 		case *SetX:
 			p.pdf.SetX(i.X)
 		case *SetY:
-			p.pdf.SetY(i.Y)
+			if !i.FromBottom {
+				p.pdf.SetY(i.Y)
+			} else {
+				p.pdf.SetY(p.pageSize.H - i.Y)
+			}
 		case *SetXY:
 			p.pdf.SetX(i.X)
 			p.pdf.SetY(i.Y)
@@ -201,7 +255,12 @@ func (p *Processor) processInstructions(is Instructions) {
 		case *Text:
 			p.renderText(i, p.appliedStyles(i))
 		case *Table:
-			p.renderTable(i, p.appliedStyles(i))
+			//fmt.Printf("\n***\ntable: %#v\n***\n", i)
+			c := i.Clone()
+			st := p.appliedStyles(c)
+			//c.Dump()
+			//dumpStyles(st)
+			p.renderTable(c, st)
 		case *Image:
 			p.renderImage(i, p.appliedStyles(i))
 		}
@@ -236,8 +295,13 @@ func (p *Processor) processLineFeed(lf *LineFeed) {
 }
 
 func (p *Processor) ln(h float64) {
-	p.pdf.SetY(p.pdf.GetY() + h)
 	p.pdf.SetX(p.pdf.MarginLeft())
+	y := p.pdf.GetY()
+	if y+h >= p.pageSize.H {
+		p.addPage()
+	} else {
+		p.pdf.SetY(y + h)
+	}
 }
 
 func (p *Processor) renderText(text *Text, sty style.Styles) {
@@ -273,7 +337,7 @@ func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	ph := p.pageSize.H
 
 	if y0+height >= ph {
-		p.pdf.AddPage()
+		p.addPage()
 		x0, y0 = p.GetXY()
 	}
 
@@ -287,7 +351,6 @@ func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	p.pdf.SetY(y0 + sty.Box.Padding.Top)
 	p.pdf.SetX(x0 + sty.Box.Padding.Left)
 	p.write(text, textWidth, sty.Dimension.LineHeight, sty.Align.HAlign, sty.Font, sty.Color.Text)
-	//p.pdf.Ln(sty.Dimension.LineHeight + sty.Box.Padding.Bottom)
 	p.ln(sty.Dimension.LineHeight + sty.Box.Padding.Bottom)
 }
 
@@ -295,10 +358,12 @@ func (p *Processor) renderImage(img *Image, sty style.Styles) {
 	x0, y0 := p.GetXY()
 	x0 += sty.Dimension.OffsetX
 	y0 += sty.Dimension.OffsetY
-	//p.pdf.ImageOptions(img.Source, x0, y0, sty.Dimension.Width, sty.Dimension.Height, false, gofpdf.ImageOptions{}, 0, "")
 	r := gofpdf.Rect{
 		W: sty.Dimension.Width,
 		H: sty.Dimension.Height,
 	}
-	p.pdf.Image(img.Source, x0, y0, &r)
+	err := p.pdf.Image(img.Source, x0, y0, &r)
+	if err != nil {
+		Logf("image: %v", err)
+	}
 }
