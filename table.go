@@ -371,7 +371,9 @@ func (p *Processor) renderCell(x0, y0, x1, y1 float64, c *TableCell, cellStyles 
 	}
 	p.pdf.SetX(x0 + cellStyles.Box.Padding.Left)
 
-	p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
+	if c.Content != "" {
+		p.write(c.Content, textWidth, cellStyles.Dimension.LineHeight, cellStyles.Align.HAlign, cellStyles.Font, cellStyles.Color.Text)
+	}
 
 	for _, inst := range c.Instructions {
 		switch inst := inst.(type) {

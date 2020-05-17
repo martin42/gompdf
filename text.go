@@ -50,7 +50,7 @@ func (p *Processor) applyMarkdownFont(mdi markdown.Item, toFnt style.Font) {
 	}
 	family := string(toFnt.Family)
 	if mdi.Code {
-		family = "Courier"
+		family = "mono"
 		mdFont.Family = family
 	}
 	//p.pdf.SetFont(family, fntStyles, toFnt.PointSize)

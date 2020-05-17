@@ -57,6 +57,62 @@ func NewProcessor(doc *Document, options ...ProcessOption) (*Processor, error) {
 	return p, nil
 }
 
+func (p *Processor) initFonts() error {
+	boldOption := gofpdf.TtfOption{
+		Style: gofpdf.Bold,
+	}
+	italicOption := gofpdf.TtfOption{
+		Style: gofpdf.Italic,
+	}
+	boldItalicOption := gofpdf.TtfOption{
+		Style: gofpdf.Bold | gofpdf.Italic,
+	}
+
+	err := p.pdf.AddTTFFont("sans", "fonts/NotoSans-Regular.ttf")
+	if err != nil {
+		return err
+	}
+	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-Bold.ttf", boldOption)
+	if err != nil {
+		return err
+	}
+	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-Italic.ttf", italicOption)
+	if err != nil {
+		return err
+	}
+	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-BoldItalic.ttf", boldItalicOption)
+	if err != nil {
+		return err
+	}
+
+	err = p.pdf.AddTTFFont("mono", "fonts/LiberationMono-Regular.ttf")
+	if err != nil {
+		return err
+	}
+	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-Bold.ttf", boldOption)
+	if err != nil {
+		return err
+	}
+	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-Italic.ttf", italicOption)
+	if err != nil {
+		return err
+	}
+	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-BoldItalic.ttf", boldItalicOption)
+	if err != nil {
+		return err
+	}
+
+	// err = p.pdf.AddTTFFont("courier", "fonts/courier.ttf")
+	// if err != nil {
+	// 	return err
+	// }
+	err = p.pdf.AddTTFFont("wts11", "fonts/wts11.ttf")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *Processor) Process(w io.Writer) error {
 	start := time.Now()
 	fmt.Printf("run instructions ...\n")
@@ -66,7 +122,7 @@ func (p *Processor) Process(w io.Writer) error {
 		PageSize: *p.pageSize,
 	})
 	p.pdf.AddPage()
-	err := p.pdf.AddTTFFont("times", "fonts/times.ttf")
+	err := p.initFonts()
 	if err != nil {
 		return err
 	}
@@ -163,8 +219,13 @@ func (p *Processor) effectiveWidth(width float64) float64 {
 }
 
 func (p *Processor) applyFont(fnt style.Font) {
+	if fnt == p.currFont {
+		return
+	}
+	st := fpdfFontStyle(fnt)
+	//Logf("apply-font: %s -> %q", fnt, st)
 	p.currFont = fnt
-	p.pdf.SetFont(string(fnt.Family), fpdfFontStyle(fnt), int(fnt.PointSize))
+	p.pdf.SetFont(string(fnt.Family), st, int(fnt.PointSize))
 }
 
 func (p *Processor) processLineFeed(lf *LineFeed) {
@@ -184,7 +245,8 @@ func (p *Processor) renderText(text *Text, sty style.Styles) {
 }
 
 func (p *Processor) GetXY() (float64, float64) {
-	return p.pdf.GetX() + p.pdf.MarginLeft(), p.pdf.GetY()
+	//return p.pdf.GetX() + p.pdf.MarginLeft(), p.pdf.GetY()
+	return p.pdf.GetX(), p.pdf.GetY()
 }
 
 func (p *Processor) SetXY(x, y float64) {
@@ -208,8 +270,6 @@ func (p *Processor) renderTextBox(text string, sty style.Styles) {
 	}
 
 	x0, y0 := p.GetXY()
-	Logf("render-box: x,y: %f, %f", x0, y0)
-	//_, ph := p.pdf.GetPageSize()
 	ph := p.pageSize.H
 
 	if y0+height >= ph {
