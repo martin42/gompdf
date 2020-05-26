@@ -6,7 +6,7 @@ import (
 
 var DefaultStyle = style.Styles{
 	Font: style.Font{
-		Family:     "Arial",
+		Family:     "sans",
 		PointSize:  12,
 		Style:      style.FontStyleNormal,
 		Weight:     style.FontWeightNormal,
