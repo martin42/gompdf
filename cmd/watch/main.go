@@ -12,8 +12,8 @@ import (
 )
 
 func main() {
-	source := flag.String("source", "../../samples/doc3.xml", "")
-	target := flag.String("target", "doc3.pdf", "")
+	source := flag.String("source", "../../samples/doc2.xml", "")
+	target := flag.String("target", "doc2.pdf", "")
 	flag.Parse()
 
 	logf("run watcher (source:%s) (target:%s)", *source, *target)

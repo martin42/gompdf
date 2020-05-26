@@ -1,118 +1,124 @@
-<Document>
+<document>
 
-<Meta>
-    <Author>mazzegi</Author>
-    <Creator>MPDF</Creator>
-    <Subject>Sample 1</Subject>
-</Meta>
+    <meta>
+        <author>mazzegi</author>
+        <creator>MPDF</creator>
+        <subject>Sample 1</subject>
+    </meta>
 
-<Default>
-    <Orientation>portrait</Orientation>
-    <Unit>mm</Unit>
-    <Format>a4</Format>
-    <PageBreaks>auto</PageBreaks>
-    <PageMargins>
-        <Left>30</Left>
-        <Top>20</Top>
-        <Right>10</Right>
-        <Bottom>20</Bottom>
-    </PageMargins>
-</Default>
+    <default>
+        <orientation>portrait</orientation>
+        <unit>mm</unit>
+        <format>a4</format>
+        <page-breaks>auto</page-breaks>
+        <page-margins>
+            <left>30</left>
+            <top>20</top>
+            <right>10</right>
+            <bottom>20</bottom>
+        </page-margins>
+    </default>
 
-<Style>
+    <style>
 default-font{
-    font-family: Arial;
+    font-family: arial;
     font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-times{
-    font-family: Times;
+    font-family: arial;
     font-point-size: 12;
     font-style: normal;	
 }
 
 default-font-small{
-    font-family: Arial;
+    font-family: arial;
     font-point-size: 6;
     font-style: normal;	
 }
 
-</Style>
+    </style>
 
-<Header>    
-</Header> 
+    <header>
+    </header>
 
-<Footer>    
-</Footer>
+    <footer>
+    </footer>
 
-<Body>
+    <body>
 
-<Font class="default-font"/>
+        <font class="default-font"/>
 
-<Box style="line-height: 1.5; width: 60; h-align: center; padding: 3,3,3,3; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
+        <set-y y="10"/>
+        <box style="line-height: 1.5; width: 200; h-align: center; padding: 3,3,3,3; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
 Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
 Claustro etiam numbat decesse.
-</Box>
+        </box>
 
-<Font  class="default-font-small"/>
-<SetY y="25"/>
-<Text style="line-height: 1.5; width: -1; h-align: right; ">
+        <font class="default-font-small"/>
+        <set-y y="35"/>
+        <text style="line-height: 1.5; width: -1; h-align: right; ">
 i' bins\
 aha der Batman\
 Tel.: 0066 (289433) 423758\
 EMail: batman@dark.knight
-</Text>
+        </text>
 
-<Font class="default-font-times"/>
-<SetY y="80"/>
-<Box style="line-height: 1.5; width: 80; h-align: right; padding:0,0,0,0;">
+        <font class="default-font-times"/>
+        <set-y y="200"/>
+        <box style="line-height: 1.5; width: 200; h-align: right; padding:0,0,0,0;">
 Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
-</Box>
+        </box>
 
-<Lf lines="3.0"/>
+        <lf lines="3.0"/>
 
-<Box style="line-height: 1.5; width: 80; h-align: left; padding:0,0,0,0;">
+        <box style="line-height: 1.5; width: 80; h-align: left; padding:0,0,0,0;">
 Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
-</Box>
+        </box>
 
-<Lf lines="4.5"/>
-<Font style="font-family: Arial;"/>
+        <lf lines="4.5"/>
+        <font style="font-family: Arial;"/>
 
-<Text style="line-height: 1.5; width: -1; h-align: right;">
+        <text style="line-height: 1.5; width: -1; h-align: right;">
 Lorem *ipsum* dolor minor. Novo\
 Set sum stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
-</Text>
+        </text>
 
-<Lf lines="4.5"/>
-<Font style="font-family: Times;"/>
+        <lf lines="4.5"/>
+        <font style="font-family: Times;"/>
 
-<Text style="line-height: 1.5; width: -1; h-align: right;">
+        <text style="line-height: 1.5; width: -1; h-align: right;">
 Lorem ipsum dolor minor. Novo
 Set sum    stupidate sin causa extrema est.
 Claustro etiam numbat decesse.
-</Text>
+        </text>
 
-<Table style="width: 20;">
-    <Tr style="width: 20;">
-        <Td style="width: 20;"><Text>classico 100</Text></Td>
-        <Td style="width: 30;"><Text>classico 200</Text></Td>
-        <Td style="width: 40;"><Text>classico 300</Text></Td>
-    </Tr>
-    <Tr>
-        <Td></Td>
-        <Td></Td>
-        <Td></Td>
-    </Tr>
-</Table>
+        <table style="width: 20;">
+            <tr style="width: 20;">
+                <td style="width: 20;">
+                    <text>classico 100</text>
+                </td>
+                <td style="width: 30;">
+                    <text>classico 200</text>
+                </td>
+                <td style="width: 40;">
+                    <text>classico 300</text>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
 
 
-</Body> 
+    </body>
 
-</Document>
-
+</document>
