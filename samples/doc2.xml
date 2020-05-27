@@ -61,7 +61,7 @@ percent-bar {
     <header>
         <set-y y="5"/>
         <text>
-        Gimme' Shelter or Convenience • et {cp} / {np}
+        A header • et {cp} / {np}
         </text>
         <set-y y="20"/>
     </header>
@@ -74,66 +74,67 @@ percent-bar {
 
         <table style="border: 1,1,1,1; padding: 2,2,2,2;">
             <tr>
-                <td style="column-width:240; h-align: left;">
-            Hier muss was stehen, damit alles sch ö ü ä Ö Ü Ä n ordentlich in Ordnung ist.
+                <td style="column-width:80; h-align: left;">
+             ö ü ä Ö Ü Ä ß sed diam voluptua.
                 </td>
-                <td style="column-width:240; h-align: right;">
-            Hier steht\
-            was anderes\
-            oder\
-            auch nicht
+                <td style="column-width:80; h-align: right;">
+            Some right\
+            aligned\
+            text\
+            ...
                 </td>
             </tr>
         </table>
 
         <table style="border: 1,1,1,1; padding: 2,2,2,2;">
             <tr style="background-color: #DDDDFF; font-weight: bold;">
-                <td style="column-width: 180;">
-            classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
+                <td style="column-width: 60;">
+            Lorem ipsum dolor sit amet, *consetetur* sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
                 </td>
-                <td style="column-width: 120;">classico 200</td>
-                <td style="column-width: 180;">Fill the gap with exhausting stupid stuff, which nobody minds</td>
+                <td style="column-width: 40;">sed diam</td>
+                <td style="column-width: 60;">Duis autem vel eum iriure dolor in hendrerit</td>
             </tr>
             <tr style="font-family: times;">
-                <td style="column-width: 180;">
-            Classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle.\Clean __circumstances__ presume altered conceptions in treating encouters.
+                <td style="column-width: 60;">
+                    Duis autem vel eum iriure dolor in *hendrerit* in vulputate velit esse molestie consequat, vel illum dolore eu feugiat\
+                    nulla facilisis at vero eros et __accumsan__ et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore            
                 </td>
-                <td style="column-span: 2;">classico 200</td>
+                <td style="column-span: 2;">sed diam</td>
             </tr>
             <tr>
-                <td style="column-width: 180; text-color: #880000;">
-            classico 100 order by *something* completely different substracted by the minimum amount of green oil in a dusty bottle
+                <td style="column-width: 60; text-color: #880000;">
+                    Duis autem vel eum iriure dolor in *hendrerit* in vulputate velit esse molestie consequat, vel illum dolore eu feugiat            
                 </td>
-                <td style="column-width: 120;">
+                <td style="column-width: 40;">
                     <image>bug.png</image>
-                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 75; background-color: #eeeeee;"></box>
-                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 45;">
+                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 25; background-color: #eeeeee;"></box>
+                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 15;">
                 45,67 %
                     </box>
                 </td>
                 <td class="font-times-big-italic-bold">
-        Fill the gap with exhausting stupid stuff, which nobody minds                    
-        \Or just leave it as it is
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit,\
+                    sed diam        
                 </td>
             </tr>
             <tr>
-                <td style="column-width: 120; column-span: 2;">
+                <td style="column-width: 40; column-span: 2;">
                     <image>bug.png</image>
-                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 75; background-color: #eeeeee;"></box>
-                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 45;">
+                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 25; background-color: #eeeeee;"></box>
+                    <box class="percent-bar" style="offset-x: 7; offset-y: 0.6; width: 15;">
                 45,67 %
                     </box>
                 </td>
-                <td>classico 9400</td>
+                <td>sed diam 9400</td>
             </tr>
         </table>
 
         <image>bug.png</image>
         <lf lines="3.0"/>
 
-        <box style="line-height: 1.5; width: 180; h-align: center; padding: 3,3,3,3; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
-Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
-Claustro etiam numbat decesse.
+        <box style="line-height: 1.5; width: 69; h-align: center; padding: 3,3,3,3; line-width: 0.3; color: #0000FF; background-color: #00FF00; border: 1,1,1,1;">
+            Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
+            Claustro etiam numbat decesse.
         </box>
 
         <text>Sic!</text>
@@ -142,28 +143,22 @@ Claustro etiam numbat decesse.
 
         <!-- <text>Cis!</text> -->
 
-        <box style="offset-x: 10; line-height: 1.5; width: 180; h-align: right; padding: 5,5,5,5; line-width: 0.3; color: #0000FF; background-color: #aaFFaa; border: 1,1,1,1;">
-Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
-Claustro etiam numbat decesse.\
-When birds encapsulate\
-recent wheather phenomina\
-cold authors trend\
-to repeat winter's\
-perceptions\
-always and never
+        <box style="offset-x: 10; line-height: 1.5; width: 60; h-align: right; padding: 5,5,5,5; line-width: 0.3; color: #0000FF; background-color: #aaFFaa; border: 1,1,1,1;">
+            Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
+            Duis autem vel eum iriure dolor\
+            in hendrerit in vulputate\
+            velit esse molestie\
+            consequat, vel illum dolore eu feugiat            
         </box>
 
         <lf lines="2.0"/>
 
-        <box style="offset-x: 10; line-height: 1.5; width: 270; h-align: center; padding: 5,5,5,5; line-width: 0.3; text-color: #eeeeee; color: #0000FF; background-color: #5555aa; border: 1,1,1,1;">
-Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
-Claustro etiam numbat decesse.\
-When birds encapsulate\
-recent wheather phenomina\
-cold authors trend\
-to repeat winter's\
-perceptions\
-always and never
+        <box style="offset-x: 10; line-height: 1.5; width: 90; h-align: center; padding: 5,5,5,5; line-width: 0.3; text-color: #eeeeee; color: #0000FF; background-color: #5555aa; border: 1,1,1,1;">
+            Num Lorem `__ipsum__ non \ muso` dolor minor. Set stupidate sin causa extrema est. Populi sunt omnes kretesse coum enulli.
+            Duis autem vel eum iriure dolor\
+            in hendrerit in vulputate\
+            velit esse molestie\
+            consequat, vel illum dolore eu feugiat            
         </box>
 
         <text>Sic!</text>
@@ -172,31 +167,31 @@ always and never
         <table style="border: 1,1,1,1; padding: 2,2,2,2;">
             <tr>
                 <td>__1__: c4 e4; kf3 c6</td>
-                <td style="h-align: center;">A momentary lapse of causes</td>
+                <td style="h-align: center;">laoreet dolore magna aliquam</td>
             </tr>
             <tr>
                 <td>__2__: c4 e4; kf3 c6</td>
-                <td style="h-align: center;">A momentary lapse of causes</td>
+                <td style="h-align: center;">laoreet dolore magna aliquam</td>
             </tr>
             <tr>
                 <td>__3__: c4 e4; kf3 c6</td>
-                <td style="h-align: center;">A momentary lapse of causes</td>
+                <td style="h-align: center;">laoreet dolore magna aliquam</td>
             </tr>
             <tr>
                 <td>__4__: c4 e4; kf3 c6</td>
-                <td style="h-align: center;">A momentary lapse of causes</td>
+                <td style="h-align: center;">laoreet dolore magna aliquam</td>
             </tr>
             <tr>
                 <td>__5__: c4 e4; kf3 c6</td>
-                <td style="h-align: center;">A momentary lapse of causes</td>
+                <td style="h-align: center;">laoreet dolore magna aliquam</td>
             </tr>
             <tr>
                 <td>__6__: c4 e4; kf3 c6</td>
-                <td style="h-align: center;">A momentary lapse of causes</td>
+                <td style="h-align: center;">laoreet dolore magna aliquam</td>
             </tr>
             <tr>
                 <td>__7__: c4 e4; kf3 c6</td>
-                <td style="h-align: right;">lapse of reasons</td>
+                <td style="h-align: right;">magna ubi aliquam</td>
             </tr>
         </table>
 
