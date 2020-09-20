@@ -1,6 +1,7 @@
 package markdown
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -17,6 +18,10 @@ type Item struct {
 	Bold    bool
 	Code    bool
 	Newline bool
+}
+
+func (i Item) String() string {
+	return fmt.Sprintf("%q: italic=%t, bold=%t, code=%t, nl=%t", i.Text, i.Italic, i.Bold, i.Code, i.Newline)
 }
 
 type Items []Item
