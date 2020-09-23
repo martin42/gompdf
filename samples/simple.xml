@@ -1,0 +1,50 @@
+<document>
+    <meta>
+        <author>mazzegi</author>
+        <creator>MPDF</creator>
+        <subject>Sample 1</subject>
+    </meta>
+    <default>
+        <orientation>portrait</orientation>
+        <unit>mm</unit>
+        <format>a4</format>
+        <page-breaks>auto</page-breaks>
+        <page-margins>
+            <left>30</left>
+            <top>30</top>
+            <right>10</right>
+            <bottom>20</bottom>
+        </page-margins>
+    </default>
+
+    <style>
+    default-font{
+        font-family: dejavusans;
+        font-point-size: 12;
+        font-style: normal;	
+    }
+    </style>
+
+    <header>
+    </header>
+
+    <footer>
+    </footer>
+
+    <body>
+        <!-- <text>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+        sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+        sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+        At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        </text>
+
+        <lf lines="2"/> -->
+
+        <text class="default-font">
+        *Let's* try some __some__
+        </text>
+
+    </body>
+</document>

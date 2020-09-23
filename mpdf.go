@@ -21,7 +21,7 @@ func ParseAndBuild(source io.Reader, target io.Writer) error {
 	}
 	start := time.Now()
 	fmt.Printf("process first time...\n")
-	p, err := NewProcessor(doc)
+	p, err := NewProcessor(nil, doc)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func ParseAndBuild(source io.Reader, target io.Writer) error {
 
 	start = time.Now()
 	fmt.Printf("process second time...\n")
-	p, err = NewProcessor(doc)
+	p, err = NewProcessor(nil, doc)
 	if err != nil {
 		return err
 	}

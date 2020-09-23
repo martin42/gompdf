@@ -15,7 +15,8 @@ type ProcessOption func(p *Processor) error
 
 type Processor struct {
 	doc *Document
-	pdf *gofpdf.GoPdf
+	//pdf *gofpdf.GoPdf
+	pdf Engine
 
 	fontDir  string
 	codePage string
@@ -43,7 +44,7 @@ func WithCodePage(cp string) ProcessOption {
 	}
 }
 
-func NewProcessor(doc *Document, options ...ProcessOption) (*Processor, error) {
+func NewProcessor(pdf Engine, doc *Document, options ...ProcessOption) (*Processor, error) {
 	p := &Processor{
 		doc:              doc,
 		fontDir:          "fonts",
@@ -51,6 +52,7 @@ func NewProcessor(doc *Document, options ...ProcessOption) (*Processor, error) {
 		currStyles:       DefaultStyle,
 		currPage:         0,
 		preventPageBreak: false,
+		pdf:              pdf,
 	}
 	for _, o := range options {
 		err := o(p)
@@ -62,61 +64,80 @@ func NewProcessor(doc *Document, options ...ProcessOption) (*Processor, error) {
 	return p, nil
 }
 
-func (p *Processor) initFonts() error {
-	boldOption := gofpdf.TtfOption{
-		Style: gofpdf.Bold,
-	}
-	italicOption := gofpdf.TtfOption{
-		Style: gofpdf.Italic,
-	}
-	boldItalicOption := gofpdf.TtfOption{
-		Style: gofpdf.Bold | gofpdf.Italic,
-	}
+// func (p *Processor) initFonts() error {
+// 	boldOption := gofpdf.TtfOption{
+// 		Style: gofpdf.Bold,
+// 	}
+// 	italicOption := gofpdf.TtfOption{
+// 		Style: gofpdf.Italic,
+// 	}
+// 	boldItalicOption := gofpdf.TtfOption{
+// 		Style: gofpdf.Bold | gofpdf.Italic,
+// 	}
 
-	err := p.pdf.AddTTFFont("sans", "fonts/NotoSans-Regular.ttf")
-	if err != nil {
-		return err
-	}
-	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-Bold.ttf", boldOption)
-	if err != nil {
-		return err
-	}
-	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-Italic.ttf", italicOption)
-	if err != nil {
-		return err
-	}
-	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-BoldItalic.ttf", boldItalicOption)
-	if err != nil {
-		return err
-	}
+// 	//
+// 	err := p.pdf.AddTTFFont("dejavusans", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("dejavusans", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", boldOption)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("dejavusans", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf", italicOption)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("dejavusans", "/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf", boldItalicOption)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	//
 
-	err = p.pdf.AddTTFFont("mono", "fonts/LiberationMono-Regular.ttf")
-	if err != nil {
-		return err
-	}
-	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-Bold.ttf", boldOption)
-	if err != nil {
-		return err
-	}
-	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-Italic.ttf", italicOption)
-	if err != nil {
-		return err
-	}
-	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-BoldItalic.ttf", boldItalicOption)
-	if err != nil {
-		return err
-	}
+// 	err = p.pdf.AddTTFFont("sans", "fonts/NotoSans-Regular.ttf")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-Bold.ttf", boldOption)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-Italic.ttf", italicOption)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("sans", "fonts/NotoSans-BoldItalic.ttf", boldItalicOption)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	// err = p.pdf.AddTTFFont("courier", "fonts/courier.ttf")
-	// if err != nil {
-	// 	return err
-	// }
-	err = p.pdf.AddTTFFont("wts11", "fonts/wts11.ttf")
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// 	err = p.pdf.AddTTFFont("mono", "fonts/LiberationMono-Regular.ttf")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-Bold.ttf", boldOption)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-Italic.ttf", italicOption)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = p.pdf.AddTTFFontWithOption("mono", "fonts/LiberationMono-BoldItalic.ttf", boldItalicOption)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// err = p.pdf.AddTTFFont("courier", "fonts/courier.ttf")
+// 	// if err != nil {
+// 	// 	return err
+// 	// }
+// 	err = p.pdf.AddTTFFont("wts11", "fonts/wts11.ttf")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 //TODO: Units
 //TODO: Orientation
@@ -185,16 +206,22 @@ func (p *Processor) Process(w io.Writer, numPages int) error {
 }
 
 func (p *Processor) render() error {
-	p.pdf = &gofpdf.GoPdf{}
-	p.pdf.Start(gofpdf.Config{
-		PageSize: *p.pageSize,
-	})
-	err := p.initFonts()
-	if err != nil {
-		return err
+	// p.pdf = &gofpdf.GoPdf{}
+	// p.pdf.Start(gofpdf.Config{
+	// 	PageSize: *p.pageSize,
+	// })
+	c := Config{
+		Format: FormatA4,
 	}
-	p.addPage()
+	p.pdf.Setup(c)
+	// applyDefaults must apparently be called before the first add-page call
 	p.applyDefaults()
+
+	//err := p.initFonts()
+	// if err != nil {
+	// 	return err
+	// }
+	p.addPage()
 	p.applyFont(p.currStyles.Font)
 	p.processInstructions(p.doc.Body)
 	return nil
@@ -216,7 +243,10 @@ func (p *Processor) addPage() {
 
 func (p *Processor) applyDefaults() {
 	//p.pdf.SetAutoPageBreak(p.doc.Default.PageBreaks == PageBreakModeAuto, p.doc.Default.PageMargins.Bottom)
-	p.pdf.SetMargins(p.doc.Default.PageMargins.Left, p.doc.Default.PageMargins.Top, p.doc.Default.PageMargins.Right, p.doc.Default.PageMargins.Bottom)
+	// p.pdf.SetMargins(p.doc.Default.PageMargins.Left, p.doc.Default.PageMargins.Top, p.doc.Default.PageMargins.Right, p.doc.Default.PageMargins.Bottom)
+	// Logf("set margins (left, top, right, bottom) to: %f, %f, %f, %f",
+	// 	p.doc.Default.PageMargins.Left, p.doc.Default.PageMargins.Top, p.doc.Default.PageMargins.Right, p.doc.Default.PageMargins.Bottom)
+	//TODO: included in setup
 }
 
 func (p *Processor) appliedStyles(i Instruction) style.Styles {
@@ -273,18 +303,21 @@ func (p *Processor) effectiveWidth(width float64) float64 {
 	}
 	pw := p.pageSize.W
 	//pw, _ := p.pdf.GetPageSize()
-	l, _, r, _ := p.pdf.Margins()
-	return pw - (l + r) - 3 // without substracting 3 it doesn't fit
+	//l, _, r, _ := p.pdf.Margins()
+	ms := p.pdf.Margins()
+	return pw - (ms.Left + ms.Right) - 3 // without substracting 3 it doesn't fit
 }
 
 func (p *Processor) applyFont(fnt style.Font) {
 	if fnt == p.currFont {
 		return
 	}
-	st := fpdfFontStyle(fnt)
-	//Logf("apply-font: %s -> %q", fnt, st)
+	// st := fpdfFontStyle(fnt)
+	// //Logf("apply-font: %s -> %q", fnt, st)
+	// p.currFont = fnt
+	// p.pdf.SetFont(string(fnt.Family), st, int(fnt.PointSize))
 	p.currFont = fnt
-	p.pdf.SetFont(string(fnt.Family), st, int(fnt.PointSize))
+	p.pdf.UseFont(fnt)
 }
 
 func (p *Processor) processLineFeed(lf *LineFeed) {
@@ -295,7 +328,8 @@ func (p *Processor) processLineFeed(lf *LineFeed) {
 }
 
 func (p *Processor) ln(h float64) {
-	p.pdf.SetX(p.pdf.MarginLeft())
+	ms := p.pdf.Margins()
+	p.pdf.SetX(ms.Left)
 	y := p.pdf.GetY()
 	if y+h >= p.pageSize.H {
 		p.addPage()
@@ -358,11 +392,12 @@ func (p *Processor) renderImage(img *Image, sty style.Styles) {
 	x0, y0 := p.GetXY()
 	x0 += sty.Dimension.OffsetX
 	y0 += sty.Dimension.OffsetY
-	r := gofpdf.Rect{
-		W: sty.Dimension.Width,
-		H: sty.Dimension.Height,
-	}
-	err := p.pdf.Image(img.Source, x0, y0, &r)
+	// r := gofpdf.Rect{
+	// 	W: sty.Dimension.Width,
+	// 	H: sty.Dimension.Height,
+	// }
+	//err := p.pdf.Image(img.Source, x0, y0, &r)
+	err := p.pdf.Image(img.Source, x0, y0, sty.Dimension.Width, sty.Dimension.Height)
 	if err != nil {
 		Logf("image: %v", err)
 	}

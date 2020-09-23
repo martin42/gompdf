@@ -235,7 +235,9 @@ func (p *Processor) tableHeight(t *Table, tableStyles style.Styles) float64 {
 
 	//widthTotal, _ := p.pdf.GetPageSize()
 	widthTotal := p.pageSize.W
-	leftM, _, rightM, _ := p.pdf.Margins()
+	ms := p.pdf.Margins()
+	leftM, rightM := ms.Left, ms.Right
+	//leftM, _, rightM, _ := p.pdf.Margins()
 	widthTotal -= (leftM + rightM)
 	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
 
@@ -270,7 +272,9 @@ func (p *Processor) renderTable(t *Table, tableStyles style.Styles) {
 
 	//if not further specified, distribute witdths uniformly
 	widthTotal := p.pageSize.W
-	leftM, _, rightM, bottomM := p.pdf.Margins()
+	ms := p.pdf.Margins()
+	leftM, rightM, bottomM := ms.Left, ms.Right, ms.Bottom
+	//leftM, _, rightM, bottomM := p.pdf.Margins()
 	widthTotal -= (leftM + rightM)
 	colWs := p.ColumnWidths(t, widthTotal, tableStyles)
 	//Logf("col-widths: %v", colWs)

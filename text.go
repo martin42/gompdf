@@ -73,8 +73,11 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 			continue
 		}
 		p.applyMarkdownFont(mdWord, fnt)
-		wordWidth, _ := p.pdf.MeasureTextWidth(mdWord.Text)
-		wordWidthTrimmedRight, _ := p.pdf.MeasureTextWidth(strings.TrimRight(mdWord.Text, " "))
+		// wordWidth, _ := p.pdf.MeasureTextWidth(mdWord.Text)
+		// wordWidthTrimmedRight, _ := p.pdf.MeasureTextWidth(strings.TrimRight(mdWord.Text, " "))
+		wordWidth := p.pdf.TextWidth(mdWord.Text)
+		wordWidthTrimmedRight := p.pdf.TextWidth(strings.TrimRight(mdWord.Text, " "))
+		Logf("measure %q: w=%f (trimmed=%f)", mdWord.Text, wordWidth, wordWidthTrimmedRight)
 		if currLine.textWidth+wordWidth > width {
 			lines = append(lines, currLine)
 			currLine = textLine{
@@ -84,7 +87,8 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 		}
 		if len(currLine.mdWords) == 0 {
 			mdWord.Text = strings.TrimLeft(mdWord.Text, " ")
-			wordWidth, _ = p.pdf.MeasureTextWidth(mdWord.Text)
+			//wordWidth, _ = p.pdf.MeasureTextWidth(mdWord.Text)
+			wordWidth = p.pdf.TextWidth(mdWord.Text)
 		}
 		currLine.mdWords = append(currLine.mdWords, mdWord)
 		currLine.textWidthTrimmedRight = currLine.textWidth + wordWidthTrimmedRight
@@ -104,7 +108,8 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 
 func (p *Processor) write(text string, width float64, lineHeight float64, halign style.HAlign, fnt style.Font, cr style.RGB) {
 	p.applyFont(fnt)
-	p.pdf.SetTextColor(cr.R, cr.G, cr.B)
+	//p.pdf.SetTextColor(cr.R, cr.G, cr.B)
+	p.pdf.SetTextColor(cr)
 	text = p.normalizedText(text)
 	fontHeight := p.currFont.PointSize
 	height := fontHeight * lineHeight
@@ -126,13 +131,18 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 		}
 
 		for _, mdWord := range line.mdWords {
+			if mdWord.Text == "" {
+				continue
+			}
 			p.applyMarkdownFont(mdWord, fnt)
 			//p.pdf.Write(height, mdWord.Text)
+			Logf("write %q (x == %f)", mdWord.Text, p.pdf.GetX())
 			p.pdf.Text(mdWord.Text)
 		}
 		p.ln(height)
 	}
-	p.pdf.SetTextColor(p.currStyles.Color.Text.R, p.currStyles.Color.Text.G, p.currStyles.Color.Text.B)
+	//p.pdf.SetTextColor(p.currStyles.Color.Text.R, p.currStyles.Color.Text.G, p.currStyles.Color.Text.B)
+	p.pdf.SetTextColor(p.currStyles.Color.Text)
 	p.applyFont(p.currStyles.Font)
 }
 
