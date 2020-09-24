@@ -27,7 +27,7 @@ func main() {
 	}
 	exec := func() {
 		logf("parse and build ...")
-		err := gompdf.ParseAndBuildFile(*source, *target)
+		err := gompdf.ParseAndBuildFile(goPdfEngine(), *source, *target)
 		if err != nil {
 			logf("ERROR: %v", err)
 			return
@@ -57,4 +57,9 @@ func main() {
 
 func logf(format string, args ...interface{}) {
 	fmt.Printf(format+"\n", args...)
+}
+
+func goPdfEngine() *gompdf.GoPdfEngine {
+	e := gompdf.NewGoPdfEngine()
+	return e
 }

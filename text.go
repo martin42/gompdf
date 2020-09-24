@@ -77,7 +77,7 @@ func (p *Processor) textLines(mdWords markdown.Items, width float64, fnt style.F
 		// wordWidthTrimmedRight, _ := p.pdf.MeasureTextWidth(strings.TrimRight(mdWord.Text, " "))
 		wordWidth := p.pdf.TextWidth(mdWord.Text)
 		wordWidthTrimmedRight := p.pdf.TextWidth(strings.TrimRight(mdWord.Text, " "))
-		Logf("measure %q: w=%f (trimmed=%f)", mdWord.Text, wordWidth, wordWidthTrimmedRight)
+		//Logf("measure %q: w=%f (trimmed=%f)", mdWord.Text, wordWidth, wordWidthTrimmedRight)
 		if currLine.textWidth+wordWidth > width {
 			lines = append(lines, currLine)
 			currLine = textLine{
@@ -136,7 +136,7 @@ func (p *Processor) write(text string, width float64, lineHeight float64, halign
 			}
 			p.applyMarkdownFont(mdWord, fnt)
 			//p.pdf.Write(height, mdWord.Text)
-			Logf("write %q (x == %f)", mdWord.Text, p.pdf.GetX())
+			//Logf("write %q (x == %f)", mdWord.Text, p.pdf.GetX())
 			p.pdf.Text(mdWord.Text)
 		}
 		p.ln(height)

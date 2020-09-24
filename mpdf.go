@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -14,40 +13,44 @@ import (
 	"github.com/pkg/errors"
 )
 
-func ParseAndBuild(source io.Reader, target io.Writer) error {
+func ParseAndBuild(engine Engine, source io.Reader, target io.Writer) error {
 	doc, err := Load(source)
 	if err != nil {
 		return err
 	}
 	start := time.Now()
 	fmt.Printf("process first time...\n")
-	p, err := NewProcessor(nil, doc)
+	p, err := NewProcessor(engine, doc)
 	if err != nil {
 		return err
 	}
-	err = p.Process(ioutil.Discard, 0)
+	//err = p.Process(ioutil.Discard, 0)
+	err = p.Process(target, 0)
 	if err != nil {
 		return err
 	}
 	numPages := p.currPage
 	fmt.Printf("processed first time... in (%s)\n", time.Since(start))
 
-	start = time.Now()
-	fmt.Printf("process second time...\n")
-	p, err = NewProcessor(nil, doc)
-	if err != nil {
-		return err
+	processTwice := false
+	if processTwice {
+		start = time.Now()
+		fmt.Printf("process second time...\n")
+		p, err = NewProcessor(engine, doc)
+		if err != nil {
+			return err
+		}
+		err = p.Process(target, numPages)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("processed second time... in (%s)\n", time.Since(start))
 	}
-	err = p.Process(target, numPages)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("processed second time... in (%s)\n", time.Since(start))
 
 	return nil
 }
 
-func ParseAndBuildFile(source string, target string) error {
+func ParseAndBuildFile(engine Engine, source string, target string) error {
 	srcF, err := os.Open(source)
 	if err != nil {
 		return errors.Errorf("open (%s)", source)
@@ -60,7 +63,7 @@ func ParseAndBuildFile(source string, target string) error {
 	}
 	defer outF.Close()
 
-	return ParseAndBuild(srcF, outF)
+	return ParseAndBuild(engine, srcF, outF)
 }
 
 func Load(r io.Reader) (*Document, error) {

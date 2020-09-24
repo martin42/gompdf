@@ -211,7 +211,8 @@ func (p *Processor) render() error {
 	// 	PageSize: *p.pageSize,
 	// })
 	c := Config{
-		Format: FormatA4,
+		Format:  FormatA4,
+		Margins: p.doc.Default.PageMargins,
 	}
 	p.pdf.Setup(c)
 	// applyDefaults must apparently be called before the first add-page call

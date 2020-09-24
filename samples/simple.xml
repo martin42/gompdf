@@ -19,8 +19,8 @@
 
     <style>
     default-font{
-        font-family: dejavusans;
-        font-point-size: 12;
+        font-family: sans;
+        font-point-size: 14;
         font-style: normal;	
     }
     </style>
